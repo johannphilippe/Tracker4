@@ -30,7 +30,39 @@ set(ELEMENTS_APP_ID "com.johannphilippe.tracker")
 set(ELEMENTS_APP_VERSION "1.0")
 
 set(ELEMENTS_APP_SOURCES 
+
+      # Models
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve_point.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve.h
+
+      # Widgets
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/curve_editor.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/curve_editor.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_radio.h
+
+      # Tracker Views
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
+      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.cpp
+
+      # Maths
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/maths/cubic_spline.h
+
+      # Utilities
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/string_utilities.h
+
+
+      # Global
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.cpp
+
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-	)
+      )
+
+
+  set(ELEMENTS_APP_INCLUDE_DIRECTORIES
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/lib
+
+      )
 
 include(ElementsConfigApp)

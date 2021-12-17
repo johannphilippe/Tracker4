@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.12.4, 2021-12-17T10:36:09. -->
+<!-- Written by QtCreator 4.12.4, 2021-12-17T21:07:08. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -90,7 +90,7 @@
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/johann/Documents/GitHub/build-Tracker4-Desktop_Qt_5_15_0_Clang_64bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
-      <value type="QString" key="CMakeProjectManager.MakeStep.AdditionalArguments">-DELEMENTS_ROOT=&quot;/home/johann/Documents/Elements/elements&quot;</value>
+      <value type="QString" key="CMakeProjectManager.MakeStep.AdditionalArguments"></value>
       <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets">
        <value type="QString">all</value>
       </valuelist>
@@ -344,7 +344,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/tmp/QtCreator-DOwTwv/qtc-cmake-INlDCZYD</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/johann/Documents/GitHub/build-Tracker4-Desktop_Qt_5_15_0_Clang_64bit-Debug</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

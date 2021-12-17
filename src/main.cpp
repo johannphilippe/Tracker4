@@ -4,31 +4,27 @@
    Distributed under the MIT License (https://opensource.org/licenses/MIT)
 =============================================================================*/
 #include <elements.hpp>
+#include<tracker/jtracker.h>
 
+#include<widgets/tracker/curve_editor_view.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
-// Main window background color
-auto constexpr bkd_color = rgba(35, 35, 37, 255);
-auto background = box(bkd_color);
-
 int main(int argc, char* argv[])
 {
-   app _app(argc, argv, "Empty Starter", "com.johannphilippe.empty-starter");
-   window _win(_app.name());
-   _win.on_close = [&_app]() { _app.stop(); };
 
-   view view_(_win);
-
-   view_.content(
-                     // Add more content layers here. The order
-                     // specifies the layering. The lowest layer
-                     // is at the bottom of this list.
-
-      background     // Replace background with your main element,
-                     // or keep it and add another layer on top of it.
-   );
-
-   _app.run();
+    jtracker::curve_editor_view editor;
+   jtracker::tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
+   app->_view.content(
+               margin({10,10,10,10},
+                      hstretch(2,
+                               vtile(
+                                   editor
+                                   )
+                               )
+                      ),
+               jtracker::background
+               );
+   app->run();
    return 0;
 }
