@@ -68,6 +68,9 @@ public:
     void value(curve_editor_controller val) override;
     bool cursor(context const &ctx, point p, cursor_tracking status)  override;
 
+    curve_editor_controller& get_controller();
+    void set_controller(curve_editor_controller &c);
+
     float get_logexp_curve(float beg, float ending, int dur, int idx, float typ);
     void add_sample(point &p, const context &ctx);
     void draw_segments(const context &ctx);

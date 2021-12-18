@@ -281,6 +281,10 @@
         return pb;
     }
 
+    curve_editor_controller& curve_editor::get_controller() {return controller;}
+    void curve_editor::set_controller(curve_editor_controller &c) {controller = c;}
+
+
     bool curve_editor::click(const context &ctx, mouse_button btn)
     {
         if(btn.down) {
@@ -389,11 +393,11 @@
         this->draw_samples(ctx);
     }
 
-    void curve_editor::layout(const context &ctx)
+    void curve_editor::layout(const context &/*ctx*/)
     {
     }
 
-    bool curve_editor::cursor(context const &ctx, point p, cursor_tracking status)
+    bool curve_editor::cursor(context const &ctx, point p, cursor_tracking /*status*/)
     {
         const int found = find_sample(p, ctx);
         if(found != focused) {
@@ -405,7 +409,7 @@
         return true;
     }
 
-    bool curve_editor::key(const context &ctx, key_info k)
+    bool curve_editor::key(const context &/*ctx*/, key_info /*k*/)
     {
         return false;
     }

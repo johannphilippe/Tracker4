@@ -42,7 +42,9 @@ set(ELEMENTS_APP_SOURCES
 
       # Tracker Views
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
-      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.cpp
 
       # Maths
       ${CMAKE_CURRENT_SOURCE_DIR}/src/maths/cubic_spline.h
