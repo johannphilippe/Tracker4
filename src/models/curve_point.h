@@ -14,10 +14,12 @@ using json = nlohmann::json;
 
 struct curve_point : public point
 {
-    curve_point(float x_, float y_, float curve_) : point(x_, y_), curve(curve_)
+    curve_point(float x_, float y_, float curve_ = 0.0f) :
+        point(x_, y_), curve(curve_)
     {}
 
-    curve_point(point &p, float curve_) : point(p), curve(curve_)
+    curve_point(point &p, float curve_ = 0.0f) :
+        point(p), curve(curve_)
     {}
 
     curve_point(json &j)

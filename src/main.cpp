@@ -6,6 +6,8 @@
 #include <elements.hpp>
 #include<tracker/jtracker.h>
 #include<widgets/tracker/tab_view.h>
+#include<widgets/tracker/track.h>
+#include<widgets/tracker/track_view.h>
 
 #include<widgets/tracker/curve_editor_view.h>
 using namespace cycfi::elements;
@@ -20,11 +22,26 @@ int main(int argc, char* argv[])
 {
    jtracker::tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
    jtracker::curve_editor_view editor;
+   jtracker::track t(10, 8);
+
+   jtracker::track_set ts;
+   ts.add_track(track_type::tracker_track);
+   ts.add_track(track_type::tracker_track);
+   ts.add_track(track_type::tracker_track);
+   ts.add_track(track_type::tracker_track);
+
+   auto b = button("test");
+   b.on_click = [&](bool)
+   {
+     app->_view.layout();
+     app->_view.refresh();
+   };
 
    auto tabs = vnotebook(
                app->_view,
                deck(
-                        make_page("tracker"),
+                        //layer(align_left_top(t)),
+                        layer(align_left_top(link(ts))),
                         editor,
                         make_page("code editor")
                    ),
@@ -35,11 +52,8 @@ int main(int argc, char* argv[])
                );
 
    app->_view.content(
-                      hstretch(2,
-                               vtile(
-                                   tabs
-                                   )
-                               ),
+               vtile(
+               tabs, b),
                jtracker::background
                );
    std::cout << "app address " << app << std::endl;

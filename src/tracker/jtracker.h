@@ -35,7 +35,10 @@ private:
     static tracker_app *app_;
 };
 
-
+inline auto make_base_layer()
+{
+    rect pad(0, 0, 1920, 1080);
+}
 
 }
 

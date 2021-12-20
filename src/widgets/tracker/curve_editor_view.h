@@ -67,9 +67,23 @@ public:
             mode_selection(b, curve_mode::linear);
         };
 
-        return group("curve mode", top_margin(25, margin({10,10,10,10}, htile(
-                       linear, hspacer(3), log_exp, hspacer(3), spline_mode, hspacer(3),  cubbezier,  hspacer(3), quadbezier
-                       ))));
+        return group("curve mode",
+                     top_margin(25,
+                                margin({10,10,10,10},
+                                       htile(
+                                           linear,
+                                           hspacer(3),
+                                           log_exp,
+                                           hspacer(3),
+                                           spline_mode,
+                                           hspacer(3),
+                                           cubbezier,
+                                           hspacer(3),
+                                           quadbezier
+                                           )
+                                       )
+                                )
+                     );
     }
 
 private:

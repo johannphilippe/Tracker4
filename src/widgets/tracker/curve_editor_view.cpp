@@ -2,7 +2,8 @@
 
 namespace jtracker {
 
-curve_editor_view::curve_editor_view() : array_composite<3, vtile_element>(vtile(make_help_button(), link(editor), make_mode_buttons()))
+curve_editor_view::curve_editor_view() :
+    array_composite<3, vtile_element>(vtile(make_help_button(), link(editor), make_mode_buttons()))
 {
 }
 
