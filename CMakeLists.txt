@@ -43,6 +43,8 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_content.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_base.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_labels.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.cpp
 
       # Tracker Views
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h

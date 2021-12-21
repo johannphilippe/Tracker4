@@ -30,6 +30,13 @@ int main(int argc, char* argv[])
    ts.add_track(track_type::tracker_track);
    ts.add_track(track_type::tracker_track);
 
+   if(std::holds_alternative<jtracker::tracker_track_ptr>(ts.tracks[0]))
+   {
+       jtracker::tracker_track_ptr t_ptr =
+               std::get<jtracker::tracker_track_ptr>(ts.tracks[0]);
+       t_ptr->t_content.set_at(3, 3, std::string("hello"));
+   }
+
    auto b = button("test");
    b.on_click = [&](bool)
    {

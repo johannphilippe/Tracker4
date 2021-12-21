@@ -34,6 +34,13 @@ template<typename T> static T get_number(std::string &val,int precision=5) {
     return number;
 }
 
+template<typename T>
+static std::string get_string(T val, int precision = 5) {
+        std::ostringstream ss;
+        ss.precision(precision);
+        ss << val;
+        return ss.str();
+}
 
 }}
 

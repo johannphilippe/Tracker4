@@ -4,6 +4,7 @@
 #include<elements.hpp>
 #include<vector>
 #include<memory>
+#include<variant>
 #include<widgets/tracker/track.h>
 #include<widgets/track_base.h>
 using namespace cycfi::elements;
@@ -16,6 +17,9 @@ class sniper_track : public vtile_composite, public track_base
 public:
     sniper_track() : vtile_composite(), track_base(track_type::sniper_track) {}
 };
+
+using tracker_track_ptr = std::shared_ptr<track>;
+using sniper_track_ptr = std::shared_ptr<sniper_track>;
 
 
 class track_set : public htile_composite
@@ -36,7 +40,9 @@ public:
         case track_type::tracker_track:
         {
             std::shared_ptr<track> t_ptr(new track(8, 8));
-            tracks.push_back(t_ptr);
+            std::variant<tracker_track_ptr, sniper_track_ptr > v;
+            v = t_ptr;
+            tracks.push_back(v);
             push_back(share(htile(link(*t_ptr))));
             push_back(share(make_separator()));
 
@@ -70,7 +76,8 @@ public:
         tracks.erase(tracks.begin() + index);
     }
 
-    std::vector<std::shared_ptr<track_base>> tracks;
+
+    std::vector<std::variant<tracker_track_ptr, sniper_track_ptr>> tracks;
 };
 
 }
