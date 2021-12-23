@@ -12,8 +12,9 @@ using namespace cycfi::elements;
 
 namespace jtracker {
 
-
-class track : public track_base, public array_composite<2, vtile_element>
+class tracker_track :
+        public track_base<track_type::tracker_track>,
+        public array_composite<2, vtile_element>
 {
 public:
     inline auto make_buttons_tile()
@@ -29,7 +30,7 @@ public:
         return htile( fixed_size_label<4>("tk 1"),resize_but, clear_but );
     }
 
-    track(size_t num_line = 8, size_t num_cols = 4,
+    tracker_track(size_t num_line = 8, size_t num_cols = 4,
           std::function<void(size_t, size_t, std::string_view)>
           f = [](size_t, size_t, std::string_view){}) :
     array_composite<2, vtile_element>(vtile(make_buttons_tile(), link(t_content) ))

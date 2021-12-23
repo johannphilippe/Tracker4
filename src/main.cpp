@@ -6,12 +6,13 @@
 #include <elements.hpp>
 #include<tracker/jtracker.h>
 #include<widgets/tracker/tab_view.h>
-#include<widgets/tracker/track.h>
 #include<widgets/tracker/track_view.h>
 
 #include<widgets/tracker/curve_editor_view.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
+
+using namespace jtracker;
 
 inline auto make_page(std::string text)
 {
@@ -20,28 +21,23 @@ inline auto make_page(std::string text)
 
 int main(int argc, char* argv[])
 {
-   jtracker::tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
-   jtracker::curve_editor_view editor;
-   jtracker::track t(10, 8);
+   tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
+   curve_editor_view editor;
 
-   jtracker::track_set ts;
+   track_set ts;
    ts.add_track(track_type::tracker_track);
    ts.add_track(track_type::tracker_track);
    ts.add_track(track_type::tracker_track);
    ts.add_track(track_type::tracker_track);
 
-   if(std::holds_alternative<jtracker::tracker_track_ptr>(ts.tracks[0]))
-   {
-       jtracker::tracker_track_ptr t_ptr =
-               std::get<jtracker::tracker_track_ptr>(ts.tracks[0]);
-       t_ptr->t_content.set_at(3, 3, std::string("hello"));
-   }
 
+   auto bb = input_box();
+   auto tl = htile(bb.first);
    auto b = button("test");
    b.on_click = [&](bool)
    {
-     app->_view.layout();
-     app->_view.refresh();
+       b.end_focus();
+       tl.begin_focus();
    };
 
    auto tabs = vnotebook(
@@ -60,7 +56,7 @@ int main(int argc, char* argv[])
 
    app->_view.content(
                vtile(
-               tabs, b),
+               tl, tabs, b),
                jtracker::background
                );
    std::cout << "app address " << app << std::endl;

@@ -4,10 +4,11 @@
 
 enum class track_type {tracker_track, sniper_track};
 
+template<track_type T>
 class track_base
 {
 public:
-    track_base(track_type t = track_type::tracker_track) : type(t)
+    track_base() : type(T)
     {}
     track_type type;
 };

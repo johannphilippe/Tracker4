@@ -148,12 +148,10 @@ public:
         }
 
         ::memset(h.data(), 0, n * sizeof(T));
-
         ::memset(a.data(), 0, n * sizeof(T));
         ::memset(b.data(), 0, n * sizeof(T));
         ::memset(c.data(), 0, n * sizeof(T));
         ::memset(d.data(), 0, n * sizeof(T));
-
         ::memset(sig.data(), 0, (n + 1) * sizeof(T)  );
         ::memset(sig_temp.data(), 0, (n - 1) * sizeof(T) );
 
@@ -161,8 +159,6 @@ public:
         {
             ::memset(tridiagonal[i].data(), 0, n * sizeof(T) );
         }
-
-
 
         ::memset(interp.data(), 0, sizeof(T) * n_precision);
     }

@@ -7,8 +7,39 @@
 #include<iostream>
 #include<memory>
 #include<widgets/custom_labels.h>
+#include<widgets/track_cell.h>
 
 using namespace cycfi::elements;
+
+struct track_selection
+{
+    track_selection() : has_selected(false),
+        line_index(0), column_index(0)
+    {}
+
+    track_selection(bool has_select, size_t line_idx, size_t col_idx) :
+        has_selected(has_select), line_index(line_idx), column_index(col_idx)
+    {}
+
+    void select(size_t line, size_t column)
+    {
+        has_selected = true;
+        line_index = line;
+        column_index = column;
+    }
+
+    void unselect() {has_selected = false;}
+
+    void set_selection(size_t line, size_t col, bool focus)
+    {
+        has_selected = focus;
+        line_index = line;
+        column_index = col;
+    }
+
+    bool has_selected;
+    size_t line_index, column_index;
+};
 
 class track_line : public htile_composite
 {
@@ -28,17 +59,16 @@ public:
         {
             for(size_t i = size(); i < num_cols; i++)
             {
-                view_limits l;
-                l.max.x = (i == 1) ? 40 : 60;
-                l.min.x = l.max.x;
-                auto box = input_box();
-                cells.push_back(box.second);
-                cells.back()->on_text = [this, i](std::string_view text)
+                cells.push_back(std::make_shared<track_cell>((i==1) ? 40: 60));
+                cells.back()->on_click = [&](auto, auto)
                 {
-                    callback(line_index, i, text);
+                  return true;
                 };
-
-                this->push_back(share(limit(l, box.first )));
+                cells.back()->on_focus = [&,i](bool focus)
+                {
+                    this->on_focus(line_index, i, focus);
+                };
+                this->push_back(cells.back());
             }
         }
         else if(num_cols < cells.size() && num_cols >= 4)
@@ -51,10 +81,13 @@ public:
         }
     }
 
+    std::function<void(size_t line, size_t col, bool)> on_focus = [](size_t, size_t, bool){};
+    std::function<void(key_info k)> on_key = [](key_info){};
 
-    std::vector<std::shared_ptr<basic_input_box>> cells;
+    std::vector<std::shared_ptr<track_cell>> cells;
     size_t line_index;
     std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback;
+    int _to_focus;
 };
 
 class track_content : public vtile_composite
@@ -86,12 +119,16 @@ public:
     void set_at(size_t line, size_t col, std::string text);
     void clear_cells();
 
-
     std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback;
     std::vector<std::shared_ptr<track_line>> lines;
     size_t num_cols;
     bool fully_visible;
 
+    bool key(context const&, key_info) override;
+
+    void select(size_t line, size_t col);
+    void unselect();
+    track_selection selection;
 
 protected:
 

@@ -5,29 +5,22 @@
 #include<vector>
 #include<memory>
 #include<variant>
-#include<widgets/tracker/track.h>
+#include<widgets/tracker/tracker_track.h>
+#include<widgets/tracker/sniper_track.h>
 #include<widgets/track_base.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
 namespace jtracker {
 
-class sniper_track : public vtile_composite, public track_base
-{
-public:
-    sniper_track() : vtile_composite(), track_base(track_type::sniper_track) {}
-};
-
-using tracker_track_ptr = std::shared_ptr<track>;
+using tracker_track_ptr = std::shared_ptr<tracker_track>;
 using sniper_track_ptr = std::shared_ptr<sniper_track>;
-
 
 class track_set : public htile_composite
 {
 public:
     track_set() : htile_composite()
-    {
-    }
+    {}
 
     inline auto make_separator()
     {
@@ -39,21 +32,21 @@ public:
         switch (t) {
         case track_type::tracker_track:
         {
-            std::shared_ptr<track> t_ptr(new track(8, 8));
+            tracker_track_ptr t_ptr(new tracker_track(8, 8));
             std::variant<tracker_track_ptr, sniper_track_ptr > v;
             v = t_ptr;
             tracks.push_back(v);
-            push_back(share(htile(link(*t_ptr))));
-            push_back(share(make_separator()));
+            push_back(share(htile(link(*t_ptr), make_separator())));
 
         break;
         }
         case track_type::sniper_track:
         {
-            std::shared_ptr<sniper_track> t_ptr(new sniper_track());
-            tracks.push_back(t_ptr);
-            push_back(share(htile(link(*t_ptr))));
-            push_back(share(make_separator()));
+            sniper_track_ptr t_ptr(new sniper_track());
+            std::variant<tracker_track_ptr, sniper_track_ptr> v;
+            v = t_ptr;
+            tracks.push_back(v);
+            push_back(share(htile(link(*t_ptr), make_separator())));
             break;
         }
         }
@@ -63,8 +56,7 @@ public:
     {
         if(size() > 0)
         {
-            // needs to remove hspacer too
-            erase(end() - 2, end());
+            pop_back();
             tracks.pop_back();
         }
     }
@@ -72,8 +64,8 @@ public:
     void remove_track(size_t index)
     {
         if(index >= tracks.size()) return;
-        erase(begin() + (index * 2), begin() + (index * 2 ) + 1);
-        tracks.erase(tracks.begin() + index);
+        erase(begin() + index, begin() + index + 1);
+        tracks.erase(tracks.begin() + index, tracks.begin() + index + 1);
     }
 
 

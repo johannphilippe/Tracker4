@@ -3,6 +3,7 @@
 
 #include<elements.hpp>
 #include<utilities/string_utilities.h>
+#include<utilities/maths_utilities.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -15,6 +16,10 @@ struct spin_controller
     T value, min, max, step;
 };
 
+/*****************************************
+ * A scrollable, clickable, draggable Spinbox
+ * (Number box with range and step)
+*****************************************/
 template<typename T>
 class spinbox : public tracker<>
 {
@@ -39,16 +44,28 @@ public:
     void increment()
     {
         controller.value =
-                limit<T>(controller.min, controller.max, controller.value + controller.step);
+                jtracker::maths::limit_number<T>
+                (controller.min, controller.max, controller.value + controller.step);
         update_text();
     }
 
     void decrement()
     {
         controller.value =
-                limit<T>(controller.min, controller.max, controller.value - controller.step);
+                jtracker::maths::limit_number<T>
+                (controller.min, controller.max, controller.value - controller.step);
         update_text();
     }
+
+    void set_value(T val)
+    {
+        controller.value =
+                jtracker::maths::limit_number<T>
+                (controller.min, controller.max, val);
+        update_text();
+    }
+
+    T get_value() {return controller.value;}
 
     spin_controller<T> controller;
     std::function<void(T)> on_change;

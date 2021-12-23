@@ -45,14 +45,15 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_labels.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_cell.h
 
       # Tracker Views
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_track.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/sniper_track.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.cpp
 
@@ -61,6 +62,8 @@ set(ELEMENTS_APP_SOURCES
 
       # Utilities
       ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/string_utilities.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/maths_utilities.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/paint_utilities.h
 
 
       # Global

@@ -6,7 +6,7 @@ In development version of new jo_tracker. The new name is not found yet.
 
 This repository includes some open-source libraries source code : 
 
-* [RapidJSON](https://github.com/Tencent/rapidjson)
+* [Nlohmann::json](https://github.com/nlohmann/json)
 * [LexerTK](https://github.com/ArashPartow/lexertk) - the version included is modified. 
 
 ## Dependencies
