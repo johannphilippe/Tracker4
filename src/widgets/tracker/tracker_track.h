@@ -39,6 +39,12 @@ public:
         t_content.set_num_lines(num_line);
     }
 
+    void end_focus() override
+    {
+        t_content.unselect();
+        array_composite<2, vtile_element>::end_focus();
+    }
+
     track_content t_content;
 };
 }

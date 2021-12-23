@@ -1,7 +1,7 @@
 # Track
 
 - Add a longer text box at top of trackset that can be editable (linked to the selected cell) or enslaved. Must be able to "deactivate" (sniper track). 
-- tracker_track keys : (backspace, tab etc...). 
+#OK- tracker_track keys : (backspace, tab etc...). 
 - For cells : separate focus from select (can be selected, but not focused to allow other manipulations - like select multiple cells )
 - Color modes for lines : antescofo/chuck, lua, Csound score, realtime line selection (csound perf).
 - simplify architecture (do the view.post in top architecture so there is no need to post/refresh a lot of events)
@@ -11,3 +11,7 @@
 - Reduce P2 size (max 2 or 3 characters)
 - Reduce others as well ?
 
+
+# Animations 
+
+- Make a singleton for animations (equivalent to cell animator, but singleton so that there is no big perf troubles in the app)

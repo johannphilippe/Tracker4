@@ -73,7 +73,7 @@ public:
 private:
     void update_text()
     {
-        on_change(controller.value);
+        //on_change(controller.value);
         _text = jtracker::string::get_string<T>(controller.value);
     }
 

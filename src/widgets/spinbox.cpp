@@ -50,12 +50,14 @@ bool spinbox<T>::click(context const& ctx, mouse_button btn)
         {
             decrement();
             ctx.view.refresh(*this);
+            on_change(controller.value);
             break;
         }
         case 2:
         {
             increment();
             ctx.view.refresh(*this);
+            on_change(controller.value);
             break;
         }
         default:
@@ -93,10 +95,12 @@ bool spinbox<T>::scroll(context const&ctx, point dir, point )
     if(dir.y < 0) {
         decrement();
         ctx.view.refresh(*this);
+        on_change(controller.value);
     }
     else if(dir.y > 0) {
         increment();
         ctx.view.refresh(*this);
+        on_change(controller.value);
     }
     return true;
 }
@@ -112,10 +116,17 @@ void spinbox<T>::drag(const context &ctx, mouse_button btn)
         click_pos = btn.pos;
         decrement();
         ctx.view.refresh(*this);
+        on_change(controller.value);
     } else if(diff < -step)
     {
         click_pos = btn.pos;
         increment();
         ctx.view.refresh(*this);
+        on_change(controller.value);
     }
 }
+
+template class spinbox<int>;
+template class spinbox<float>;
+template class spinbox<double>;
+template class spinbox<size_t>;

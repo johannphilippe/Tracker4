@@ -24,27 +24,16 @@ int main(int argc, char* argv[])
    tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
    curve_editor_view editor;
 
-   track_set ts;
-   ts.add_track(track_type::tracker_track);
-   ts.add_track(track_type::tracker_track);
-   ts.add_track(track_type::tracker_track);
-   ts.add_track(track_type::tracker_track);
 
+   track_view tv;
+   tv.t_set.add_track();
 
-   auto bb = input_box();
-   auto tl = htile(bb.first);
-   auto b = button("test");
-   b.on_click = [&](bool)
-   {
-       b.end_focus();
-       tl.begin_focus();
-   };
 
    auto tabs = vnotebook(
                app->_view,
                deck(
                         //layer(align_left_top(t)),
-                        layer(align_left_top(link(ts))),
+                        margin({5, 5, 5, 5}, layer(align_left_top( link(tv) ))),
                         editor,
                         make_page("code editor")
                    ),
@@ -54,9 +43,11 @@ int main(int argc, char* argv[])
 
                );
 
+
    app->_view.content(
                vtile(
-               tl, tabs, b),
+                   tabs
+                   ),
                jtracker::background
                );
    std::cout << "app address " << app << std::endl;

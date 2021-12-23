@@ -6,6 +6,7 @@
 #include<utilities/paint_utilities.h>
 
 #include<tracker/jtracker.h>
+#include<models/track_event.h>
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
@@ -14,27 +15,25 @@ class custom_text_box : public basic_input_box
 {
 public:
     custom_text_box() : basic_input_box()
-    {}
-
-
-    void begin_focus() override
     {
-        basic_input_box::begin_focus();
     }
+
+
+private:
 };
 
 class cell_background : public tracker<>
 {
 public:
     constexpr static const size_t frame_steps = 15;
-    constexpr static auto fps = 30ms;
 
-    cell_background(std::string text_ = "", float width = 40) :
+    cell_background(std::string text_ = "", float width = 40,
+                    color inactive_color = get_theme().panel_color) :
         tracker<>(),
         _width(width),
         is_active(false),
-        active(colors::dark_orange.opacity(0.5)),
-        inactive(get_theme().panel_color),
+        inactive(inactive_color),
+        active(inactive_color.opacity(1)),
         current_color(inactive)
     {
     }
@@ -50,23 +49,24 @@ public:
         ctx.canvas.stroke();
     }
 
-    void set_selection(bool b, view &v) {
-        if(b) select(v);
-        else unselect(v);
+    void set_selection(bool b) {
+        if(b) select();
+        else unselect();
     }
-    void select(view &v) {
-        set_color(colors::dark_orange.opacity(0.5), v);
+    void select() {
+        set_color(active);
         is_active = true;
     }
-    void unselect(view &v) {
-        set_color(get_theme().panel_color, v);
+
+    void unselect() {
+        set_color(inactive);
         is_active = false;
     }
 
-    void set_color(color c, view &v)
+    void set_color(color c)
     {
         current_color.set_color_target(c, frame_steps);
-        animate(v);
+        //animate(v);
     }
 
     void set_color_no_redraw(color c)
@@ -75,21 +75,20 @@ public:
     }
 
 
-    void animate(view &view)
-    {
-        if(current_color.interpolate()) return;
-        view.refresh(*this);
-        view.post(fps, [&, this]() {
-            animate(view);
-        });
-    }
-
     bool wants_focus() const override {return false;}
 
+    void set_inactive_color(color _inactive)
+    {
+        inactive = _inactive;
+        active = inactive.opacity(1);
+        if(inactive == get_theme().panel_color)
+            active = colors::goldenrod.opacity(0.5);
+        current_color = inactive;
+    }
 
     float _width;
     bool is_active;
-    color active, inactive;
+    color inactive, active;
     jtracker::color_utilities::interpolated_color current_color;
 };
 
@@ -99,11 +98,11 @@ class track_cell :
         public array_composite<2, layer_element>
 {
 public:
-    track_cell( float width = 60) :
+    track_cell( float width = 60, color inactive_color = get_theme().panel_color) :
         array_composite<2, layer_element>(
             layer(
                 scroller(
-                    hsize(16384,
+                    hsize(100,
                           align_middle(
                           margin({1,1,1,1},link(text_box)))),
                     no_scrollbars | no_vscroll
@@ -113,6 +112,7 @@ public:
             ),
         _width(width)
     {
+        background.set_inactive_color(inactive_color);
         text_box.on_text = [&](std::string_view v)
         {
             std::cout << "on text : " << v << std::endl;
@@ -129,7 +129,7 @@ public:
     bool click(context const& ctx, mouse_button btn) override
     {
         text_box.click(ctx, btn);
-        on_focus(true);
+        on_click(ctx, btn);
         return true;
     }
 
@@ -140,9 +140,8 @@ public:
     using click_function = std::function<bool(context const& ctx, mouse_button btn)>;
     click_function on_click = [](context const &, mouse_button){ return false; };
 
-    std::function<void(bool)> on_focus =[](bool){};
-
     float _width;
+    //basic_input_box text_box;
     basic_input_box text_box;
     cell_background background;
 };

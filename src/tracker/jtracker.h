@@ -2,6 +2,7 @@
 #define JTRACKER_H
 
 #include<elements.hpp>
+#include<iostream>
 
 using namespace cycfi::elements;
 
@@ -10,6 +11,7 @@ namespace jtracker {
 // Main window background color
 extern cycfi::artist::color bkd_color;
 extern box_element background;
+
 
 // App singleton
 class tracker_app : public app
@@ -27,9 +29,15 @@ public:
         _view.refresh();
     }
 
+    void refresh(element_ptr ptr)
+    {
+        if(tracker_app::app_ == nullptr) return;
+        _view.refresh(*ptr);
+    }
+
 private:
     tracker_app(int argc, char *argv[]);
-    tracker_app& operator= (const tracker_app&){}
+    tracker_app& operator= (const tracker_app&) = delete;
     tracker_app (const tracker_app&) = delete;
 
     static tracker_app *app_;

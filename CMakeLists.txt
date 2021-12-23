@@ -34,6 +34,7 @@ set(ELEMENTS_APP_SOURCES
       # Models
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve_point.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/models/track_event.h
 
       # Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/curve_editor.h
