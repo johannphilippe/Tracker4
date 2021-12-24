@@ -23,6 +23,7 @@ public:
         clear_but.on_click = [&](bool) {t_content.clear_cells();};
         auto resize_but = icon_button(icons::resize_horizontal, 1);
         resize_but.on_click = [&](bool) {
+            std::cout << " resize track " << std::endl;
             t_content.toggle_show();
             jtracker::tracker_app::get_instance()->_view.layout();
             jtracker::tracker_app::get_instance()->_view.refresh();
@@ -37,6 +38,19 @@ public:
     {
         t_content.set_num_cols(num_cols);
         t_content.set_num_lines(num_line);
+    }
+
+    bool click(context const& ctx, mouse_button btn)
+    {
+        std::cout << "tracker track click " << btn.pos.x << " " << btn.pos.y << std::endl;
+        // check if it should target the bar click or the track click
+        context rctx {ctx, ctx.bounds};
+        rctx.bounds.top += this->at(0).limits(ctx).max.y;
+        if(rctx.bounds.includes(btn.pos))
+        {
+            return this->at(1).click(rctx, btn);
+        }
+        return array_composite<2, vtile_element>::click(ctx, btn);
     }
 
     void end_focus() override

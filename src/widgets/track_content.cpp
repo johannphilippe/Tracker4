@@ -15,88 +15,53 @@ void track_content::toggle_show()
 
 void track_content::set_num_lines(size_t num_lines)
 {
-    if(num_lines > lines.size())
-    {
-
-        auto comp = [&](size_t index)
-        {
-        };
-
-        lines.reserve(num_lines);
-        reserve(num_lines);
-        for(size_t i = size(); i < num_lines; i++)
-        {
-            track_event_type t = static_cast<track_event_type>(rand() % 6);
-            std::shared_ptr<track_line> line_ptr(
-                        new track_line( (fully_visible) ? num_cols : 4, i, callback, t));
-            lines.push_back(line_ptr);
-            lines.back()->on_click = [&, i](context const&ctx, mouse_button btn, size_t col_index)
-            {
-                click_select(ctx, btn, i, col_index);
-            };
-            auto label = fixed_size_label<4>(std::to_string(i));
-            //push_back(share(htile(label, link(*lines.back().get()) )));
-            push_back(share(htile(label, *lines.back() )));
-        }
-    } else if(num_lines < lines.size())
-    {
-        while(num_lines < lines.size())
-        {
-            lines.pop_back();
-            pop_back();
-        }
-    }
+    active_dynamic_list<track_line>::resize(num_lines);
 }
 
 void track_content::set_num_cols(size_t cols)
 {
     if(cols == num_cols) return;
     num_cols = cols;
-    display_visible();
+
+    for(auto & it : get_composer()->_rows)
+    {
+        if(it == nullptr) break;
+        it->set_num_cols(cols);
+    }
 }
-
-
-void track_content::set_text_callback(std::function<void(size_t l_idx,
-                                                         size_t c_idx, std::string_view text)> f)
-{
-    callback = f;
-    for(auto & it : lines)
-        it->callback = this->callback;
-}
-
 
 std::u32string_view track_content::get_at(size_t line, size_t col)
 {
-    if(line >= lines.size() || col >= num_cols)
+    if(line >= get_composer()->_rows.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
-    return lines[line]->cells[col]->get_text();
+    return get_cell_at(line, col)->get_text();
 }
 
 std::string track_content::get_as_string_at(size_t line, size_t col)
 {
-    if(line >= lines.size() || col >= num_cols)
+    if(line >= get_composer()->_rows.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
-    std::u32string_view v = lines[line]->cells[col]->get_text();
+    std::u32string_view v = get_cell_at(line, col)->get_text();
     return std::string(v.begin(), v.end());
 }
 
 void track_content::set_at(size_t line, size_t col, std::string_view text)
 {
-    if(line >= lines.size() || col >= num_cols)
+    if(line >= get_composer()->_rows.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
-    lines[line]->cells[col]->set_text(text);
+    get_cell_at(line, col)->set_text(text);
 }
 
 void track_content::set_at(size_t line, size_t col, std::string text)
 {
-    if(line >= lines.size() || col >= num_cols)
+    if(line >= get_composer()->_rows.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
-    lines[line]->cells[col]->set_text(text);
+    get_cell_at(line, col)->set_text(text);
 }
 
 void track_content::clear_cells()
 {
-    for(auto & it : lines)
+    for(auto & it : get_composer()->_rows)
         for(auto & it2 : it->cells)
         it2->set_text("");
 
@@ -111,6 +76,7 @@ bool track_content::key(const context &ctx, key_info k)
 */
 bool track_content::key(context const& ctx, key_info k)
 {
+    std::cout << "key in tradck content " << std::endl;
     if(!selection.has_selection) return true;// vtile_composite::key(ctx, k);
     cell_selection old = selection.selected[selection.current_cell_index];
     cell_selection new_sel = old;
@@ -122,10 +88,8 @@ bool track_content::key(context const& ctx, key_info k)
         selection.is_editing = false;
         end_focus();
         focus(selection.main_selected_line());
-        lines[selection.main_selected_line()]->
-                focus(selection.main_selected_column());
-        lines[selection.main_selected_line()]->
-                cells[selection.main_selected_column()]->focus(1);
+        get_composer()->_rows[selection.main_selected_line()]->focus(selection.main_selected_column());
+        get_main_cell()->focus(1);
         begin_focus();
         ctx.view.refresh();
     };
@@ -157,7 +121,7 @@ bool track_content::key(context const& ctx, key_info k)
       } else if(new_sel.line_index > 0)
       {
           new_sel.line_index--;
-          new_sel.column_index = lines[new_sel.line_index]->size() - 1;
+          new_sel.column_index = get_composer()->_rows[new_sel.line_index]->size() - 1;
           update_selection();
       }
     };
@@ -165,11 +129,11 @@ bool track_content::key(context const& ctx, key_info k)
     auto next_cell = [&]()
     {
         if(new_sel.column_index <
-                lines[new_sel.line_index]->cells.size() - 1)
+                get_composer()->_rows[new_sel.line_index]->cells.size() - 1)
         {
             new_sel.column_index++;
             update_selection();
-        } else if(new_sel.line_index < lines.size() - 1)
+        } else if(new_sel.line_index < get_composer()->_rows.size() - 1)
         {
             new_sel.line_index++;
             new_sel.column_index = 0;
@@ -184,8 +148,7 @@ bool track_content::key(context const& ctx, key_info k)
         case key_code::right:
         {
             std::cout << "forward left right " << std::endl;
-            return lines[selection.main_selected_line()]->
-                    cells[selection.main_selected_column()]->text_box.key(ctx, k);
+            return get_main_cell()->text_box.key(ctx, k);
         }
         default:
             break;
@@ -220,7 +183,8 @@ bool track_content::key(context const& ctx, key_info k)
     }
     case key_code::down:
     {
-        if(new_sel.line_index < (lines.size() - 1)) {
+        if(new_sel.line_index < (get_composer()->_rows.size() - 1)) {
+            std::cout << "still going down " << new_sel.line_index << std::endl;
             new_sel.line_index++;
             update_selection();
         }
@@ -236,14 +200,11 @@ bool track_content::key(context const& ctx, key_info k)
         selection.is_editing = true;
         if(k.modifiers & mod_control)
         {
-            lines[selection.main_selected_line()]->
-                    cells[selection.main_selected_column()]->text_box.set_text("");
-            ctx.view.refresh(lines[selection.main_selected_line()]->
-                    cells[selection.main_selected_column()]->text_box);
+            get_main_cell()->text_box.set_text("");
+            ctx.view.refresh(get_main_cell()->text_box);
             return true;
         }
-        return lines[selection.main_selected_line()]->
-                cells[selection.main_selected_column()]->text_box.key(ctx,k);
+        return get_main_cell()->text_box.key(ctx, k);
         break;
     }
     default:
@@ -258,6 +219,7 @@ bool track_content::key(context const& ctx, key_info k)
 
 void track_content::click_select(context const&, mouse_button btn, size_t line, size_t col)
 {
+    std::cout << "click : " << line << " " << col << std::endl;
     if(btn.down) {
         view &v = jtracker::tracker_app::get_instance()->_view;
 
@@ -343,6 +305,12 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
     }
 }
 
+bool track_content::click(const context &ctx, mouse_button btn)
+{
+    std::cout << "track ontent click !!! " << std::endl;
+    return active_dynamic_list<track_line>::click(ctx, btn);
+}
+
 void track_content::unselect()
 {
    view &v = jtracker::tracker_app::get_instance()->_view;
@@ -366,23 +334,22 @@ void track_content::unselect()
 
 std::shared_ptr<track_cell>& track_content::get_cell_at(size_t line, size_t col)
 {
-    return lines[line]->cells[col];
+    return get_composer()->_rows[line]->cells[col];
 }
 
 std::shared_ptr<track_cell>& track_content::get_main_cell()
 {
-    return lines[selection.main_selected_line()]->cells[selection.main_selected_column()];
+    return get_composer()->_rows[selection.main_selected_line()]->
+            cells[selection.main_selected_column()];
 }
 
 void track_content::display_visible()
 {
     if(fully_visible)
     {
-        for(auto & it : lines)
-            it->set_num_cols(num_cols);
+        this->set_num_cols(num_cols);
     } else
     {
-        for(auto & it : lines)
-            it->set_num_cols(4);
+        this->set_num_cols(4);
     }
 }

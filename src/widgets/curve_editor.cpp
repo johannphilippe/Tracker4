@@ -341,6 +341,7 @@
             if( (btn_pos_relative.x < controller.samples.front().x) || (btn_pos_relative.x > controller.samples.back().x) ) return;
             for(size_t i = 0; i < controller.samples.size() - 1; i++)
             {
+                if(controller.mode != curve_mode::log_exp ) return;
                    if( (btn_pos_relative.x > controller.samples[i].x) && (btn_pos_relative.x < controller.samples[i + 1].x))
                    {
                       controller.samples[i].curve += (last_position.y - btn_pos_relative.y);

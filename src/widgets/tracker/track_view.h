@@ -85,7 +85,7 @@ public:
             if(std::holds_alternative<tracker_track_ptr>(it))
             {
                 tracker_track_ptr t_ptr(std::get<tracker_track_ptr>(it));
-                if(t_ptr->t_content.lines.size() != lines)
+                if(t_ptr->t_content.get_composer()->_rows.size() != lines)
                     t_ptr->t_content.set_num_lines(lines);
             }
         }
@@ -96,7 +96,7 @@ public:
         switch (t) {
         case track_type::tracker_track:
         {
-            tracker_track_ptr t_ptr(new tracker_track(8, 8));
+            tracker_track_ptr t_ptr(new tracker_track(64, 8));
             std::variant<tracker_track_ptr, sniper_track_ptr > v;
             v = t_ptr;
             tracks.push_back(v);
@@ -151,7 +151,16 @@ class track_view : public array_composite<3, vtile_element>
 {
 public:
     track_view() :
-        array_composite<3, vtile_element>(vtile( link(bar), link(text_box), scroller(  margin({5, 20, 5, 30}, link(t_set)) )))
+        array_composite<3, vtile_element>(vtile(
+                                              link(bar),
+                                              link(text_box),
+                                              scroller(
+                                                  margin({5, 20, 5, 30},
+                                                         link(t_set)
+                                                         )
+                                                  )
+                                              )
+                                          )
     {
         bar.track_nbr.on_change = [&](size_t v)
         {
@@ -159,14 +168,13 @@ public:
             t_set.set_num_lines(bar.line_nbr.get_value());
             jtracker::tracker_app::get_instance()->_view.refresh(*this);
         };
-        bar.track_nbr.set_value(4);
+        bar.track_nbr.set_value(8);
         t_set.set_num_tracks(bar.track_nbr.get_value());
 
         bar.line_nbr.set_value(16);
         t_set.set_num_lines(bar.line_nbr.get_value());
         bar.line_nbr.on_change = [&](size_t l)
         {
-
           t_set.set_num_lines(l);
           view &v = jtracker::tracker_app::get_instance()->_view;
           jtracker::tracker_app::get_instance()->_view.post([&](){

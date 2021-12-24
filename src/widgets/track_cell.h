@@ -128,6 +128,7 @@ public:
 
     bool click(context const& ctx, mouse_button btn) override
     {
+        std::cout << "cell click " << std::endl;
         text_box.click(ctx, btn);
         on_click(ctx, btn);
         return true;

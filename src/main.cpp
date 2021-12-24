@@ -26,7 +26,6 @@ int main(int argc, char* argv[])
 
 
    track_view tv;
-   tv.t_set.add_track();
 
 
    auto tabs = vnotebook(

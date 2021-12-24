@@ -9,6 +9,7 @@
 #include<widgets/custom_labels.h>
 #include<widgets/track_cell.h>
 #include<models/track_event.h>
+#include<widgets/active_dynamic_list.h>
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
@@ -141,12 +142,14 @@ struct cell_selector
 class track_line : public htile_composite
 {
 public:
-    track_line(size_t num, size_t l_idx, std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> f,
+    track_line(size_t num, size_t l_idx, std::function<void(context const&, mouse_button, size_t)> on_click_,
                track_event_type ev_type = track_event_type::none) :
     htile_composite(),
-    line_index(l_idx), callback(f),
-    event_type(ev_type)
+    line_index(l_idx),
+    event_type(ev_type),
+      on_click(on_click_)
     {
+        //this->push_back(share(fixed_size_label<4>(std::to_string(l_idx))));
         set_num_cols(num);
     }
 
@@ -157,15 +160,14 @@ public:
         {
             reserve(num_cols);
             cells.reserve(num_cols);
-            for(size_t i = size(); i < num_cols; i++)
+            for(size_t i = cells.size(); i < num_cols; i++)
             {
                 cells.push_back(std::make_shared<track_cell>((i==1) ? 40: 60, get_event_color(event_type)));
-                cells.back()->on_click = [&, i](context const& ctx, mouse_button btn)
+                cells.back()->on_click = [this, i](context const& ctx, mouse_button btn)
                 {
-                    on_click(ctx, btn, i);
+                    this->on_click(ctx, btn, i);
                     return true;
                 };
-                //cells.back()->text_box.set_text(std::to_string(static_cast<int>(event_type) ) );
                 this->push_back(cells.back());
             }
         }
@@ -179,37 +181,55 @@ public:
         }
     }
 
+    view_limits limits(basic_context const& ctx) const  override
+    {
+        if(size() != 0)
+            return htile_composite::limits(ctx);
+        return  {{0, 0}, {0,0}};
+    }
+
     std::function<void(context const&ctx, mouse_button btn, size_t col_index)> on_click;
     std::function<void(key_info k)> on_key = [](key_info){};
 
     std::vector<std::shared_ptr<track_cell>> cells;
     size_t line_index;
-    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback;
+
     int _to_focus;
 
     track_event_type event_type;
+
+    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback =
+            [](size_t, size_t, std::string_view) {};
 };
+
 
 /*
  * Represents a spreadsheet of cells with selection states.
 */
-class track_content : public vtile_composite
+class track_content : public active_dynamic_list<track_line>
 {
 public:
-    track_content(size_t num_lines = 8, size_t num_cols = 4) :
-        vtile_composite(), callback([&](size_t, size_t, std::string_view){}),
-        num_cols(num_cols), fully_visible(false)
+
+    // line maker
+    inline std::shared_ptr<track_line> make_line(size_t i, size_t num_lines, size_t num_cols)
     {
-        set_num_lines(num_lines);
-    }
-    track_content(size_t num_lines, size_t num_cols,
-                 std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> f) :
-        vtile_composite(), callback(f), num_cols(num_cols), fully_visible(false)
-    {
-        set_num_lines(num_lines);
+        auto click_cbk = [&, i, num_lines, num_cols](context const& ctx, mouse_button btn, size_t col)
+        {
+            std::cout << "click callback !!! " << i << " "  << col << std::endl;
+          click_select(ctx, btn, i, col);
+        };
+        std::shared_ptr<track_line> line_ptr = std::make_shared<track_line>(num_cols, i, click_cbk, static_cast<track_event_type>(rand() % 6) );
+        return line_ptr;
     }
 
-    void set_text_callback(std::function<void(size_t l_idx, size_t c_idx, std::string_view text)> f);
+    // track content constructor
+    track_content(size_t num_lines = 64, size_t num_cols = 4) :
+        active_dynamic_list(
+            std::make_shared<active_cell_composer<track_line>>(num_lines,
+                                                               [&, num_lines, num_cols](size_t i) -> std::shared_ptr<track_line> {return make_line(i, num_lines, num_cols);}
+            )), num_cols(num_cols)
+    {
+    }
 
     void set_num_lines(size_t num_lines);
     void set_num_cols(size_t cols);
@@ -223,21 +243,22 @@ public:
     void clear_cells();
 
     bool key(context const&, key_info) override;
+    bool click(context const& ctx, mouse_button btn) override;
     void click_select(context const&ctx, mouse_button btn, size_t line, size_t col);
     void unselect();
 
     std::shared_ptr<track_cell>& get_cell_at(size_t line, size_t col);
     std::shared_ptr<track_cell>& get_main_cell();
 
+    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback =
+            [](size_t, size_t, std::string_view){};
 
-    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback;
-    std::vector<std::shared_ptr<track_line>> lines;
-    size_t num_cols;
-    bool fully_visible;
+    bool fully_visible = false;
+
     cell_selector selection;
-
     cell_animator animator;
 
+    size_t num_cols;
 protected:
 
     void display_visible();
