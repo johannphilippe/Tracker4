@@ -21,18 +21,20 @@ inline auto make_page(std::string text)
 
 int main(int argc, char* argv[])
 {
-   tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
-   curve_editor_view editor;
+    tracker_app *app = jtracker::tracker_app::get_instance(argc, argv);
+    curve_editor_view editor;
+    track_view tv;
+    tv.t_set.add_track(track_type::sniper_track);
 
-
-   track_view tv;
-
-
-   auto tabs = vnotebook(
+    auto tabs = vnotebook(
                app->_view,
                deck(
-                        //layer(align_left_top(t)),
-                        margin({5, 5, 5, 5}, layer(align_left_top( link(tv) ))),
+                        margin({5, 5, 5, 5},
+                               layer(
+                                   align_left_top(
+                                       link(tv) )
+                                   )
+                               ),
                         editor,
                         make_page("code editor")
                    ),
@@ -42,14 +44,12 @@ int main(int argc, char* argv[])
 
                );
 
-
-   app->_view.content(
+    app->_view.content(
                vtile(
                    tabs
                    ),
                jtracker::background
                );
-   std::cout << "app address " << app << std::endl;
-   app->run();
-   return 0;
+    app->run();
+    return 0;
 }

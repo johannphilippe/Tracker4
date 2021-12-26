@@ -10,131 +10,13 @@
 #include<widgets/track_cell.h>
 #include<models/track_event.h>
 #include<widgets/active_dynamic_list.h>
+#include<animations/cell_animator.h>
+#include<tracker/jtracker.h>
+#include<controllers/cell_selection_controller.h>
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
-
-
-struct cell_animator : public std::vector<std::shared_ptr<track_cell>>
-{
-    constexpr static auto fps = 33ms;
-    cell_animator() : is_animating(false)
-    {}
-
-    void animate(view &v)
-    {
-        if(is_animating) return;
-        _animate(v);
-    }
-
-    bool is_animating;
-
-private:
-    void _animate(view &v)
-    {
-        if(size() == 0) return;
-
-        for(size_t i = 0; i < size(); )
-        {
-           if(data()[i]->background.current_color.interpolate())
-               erase(begin() + i);
-           else
-               ++i;
-        }
-
-        v.refresh(  );
-        v.post(fps, [&](){_animate(v);});
-    }
-};
-
-/*
- * Represents a simple cell selection
-*/
-struct cell_selection
-{
-    cell_selection() :
-        line_index(0), column_index(0)
-    {}
-
-    cell_selection(size_t line_idx, size_t col_idx) :
-        line_index(line_idx), column_index(col_idx)
-    {}
-
-    void select(size_t line, size_t column)
-    {
-        line_index = line;
-        column_index = column;
-    }
-
-    void set_selection(size_t line, size_t col)
-    {
-        line_index = line;
-        column_index = col;
-    }
-
-    size_t line_index, column_index;
-};
-
-/*
- * Represents a list of cell selection states
- * editing and selected state
-*/
-struct cell_selector
-{
-    cell_selector() :
-        has_selection(false), is_editing(false)
-    {}
-
-    void select_main(cell_selection c)
-    {
-        has_selection = true;
-        int s = is_selected(c.line_index, c.column_index);
-        if(s != -1) {
-            current_cell_index = s;
-            return;
-        }
-        selected.push_back(c);
-        current_cell_index = selected.size() - 1;
-    }
-
-    void select_main(size_t line, size_t col)
-    {
-        select_main(cell_selection(line, col));
-    }
-
-    void remove_at(size_t index)
-    {
-        if(index > selected.size())
-            throw("Out of bounds remove in cell selector");
-        if(index == current_cell_index)
-        {
-            has_selection = is_editing = false;
-        }
-        selected.erase(selected.begin() + index);
-    }
-
-    void clear()
-    {
-        selected.clear();
-        has_selection = is_editing = false;
-    }
-
-    cell_selection main_selected_cell() {return selected[current_cell_index];}
-    size_t main_selected_line() {return selected[current_cell_index].line_index;}
-    size_t main_selected_column() {return selected[current_cell_index].column_index;};
-
-    int is_selected(size_t line, size_t column) {
-        for(size_t i = 0; i < selected.size(); ++i)
-            if(selected[i].line_index == line && selected[i].column_index == column)
-                return i;
-        return -1;
-    }
-
-    std::vector<cell_selection> selected;
-    size_t current_cell_index;
-    bool has_selection, is_editing;
-};
-
+using namespace jtracker;
 
 /*
  * Represents a line of cells.
@@ -142,31 +24,38 @@ struct cell_selector
 class track_line : public htile_composite
 {
 public:
-    track_line(size_t num, size_t l_idx, std::function<void(context const&, mouse_button, size_t)> on_click_,
+    track_line(size_t num, size_t l_idx,
                track_event_type ev_type = track_event_type::none) :
-    htile_composite(),
-    line_index(l_idx),
-    event_type(ev_type),
-      on_click(on_click_)
+        htile_composite(),
+        line_index(l_idx),
+        event_type(ev_type)
     {
-        //this->push_back(share(fixed_size_label<4>(std::to_string(l_idx))));
+        push_back(share(fixed_size_label<4>(std::to_string(l_idx))));
         set_num_cols(num);
     }
+
+    track_line(size_t num, size_t l_idx) :
+        htile_composite(), line_index(l_idx)
+    {
+        set_num_cols(num);
+    }
+
 
     void set_num_cols(size_t num_cols)
     {
         if(num_cols == cells.size()) return;
         if(num_cols > cells.size())
         {
-            reserve(num_cols);
-            cells.reserve(num_cols);
             for(size_t i = cells.size(); i < num_cols; i++)
             {
-                cells.push_back(std::make_shared<track_cell>((i==1) ? 40: 60, get_event_color(event_type)));
-                cells.back()->on_click = [this, i](context const& ctx, mouse_button btn)
+                cells.push_back(
+                            // The 40 is for P2 in Csound. It should be smaller (30, or 25) but needs to wait for the size bug to be fixed in elements.
+                            std::make_shared<track_cell>((i==1) ? 40 : 60, get_event_color(event_type))
+                            );
+                cells.back()->on_click = [&, i](context const& ctx, mouse_button btn)
                 {
-                    this->on_click(ctx, btn, i);
-                    return true;
+                    if(click_cbk != nullptr)
+                        (*click_cbk)(ctx, btn, line_index, i);
                 };
                 this->push_back(cells.back());
             }
@@ -183,82 +72,96 @@ public:
 
     view_limits limits(basic_context const& ctx) const  override
     {
-        if(size() != 0)
-            return htile_composite::limits(ctx);
-        return  {{0, 0}, {0,0}};
+        return htile_composite::limits(ctx);
     }
 
-    std::function<void(context const&ctx, mouse_button btn, size_t col_index)> on_click;
+    std::function<void(context const&ctx, mouse_button btn, size_t, size_t col_index)> *click_cbk = nullptr;
     std::function<void(key_info k)> on_key = [](key_info){};
 
     std::vector<std::shared_ptr<track_cell>> cells;
-    size_t line_index;
+    size_t line_index = 0;
 
     int _to_focus;
 
     track_event_type event_type;
 
-    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback =
+    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
             [](size_t, size_t, std::string_view) {};
+
 };
 
 
 /*
- * Represents a spreadsheet of cells with selection states.
+ * Represents a spreadsheet of dynamic cells
 */
-class track_content : public active_dynamic_list<track_line>
+class track_content : public dynamic_list
 {
 public:
 
     // line maker
-    inline std::shared_ptr<track_line> make_line(size_t i, size_t num_lines, size_t num_cols)
+    std::shared_ptr<track_line> make_line(size_t i)
     {
-        auto click_cbk = [&, i, num_lines, num_cols](context const& ctx, mouse_button btn, size_t col)
+        if(i >= _lines.size())
         {
-            std::cout << "click callback !!! " << i << " "  << col << std::endl;
-          click_select(ctx, btn, i, col);
-        };
-        std::shared_ptr<track_line> line_ptr = std::make_shared<track_line>(num_cols, i, click_cbk, static_cast<track_event_type>(rand() % 6) );
-        return line_ptr;
+            std::cout << "Overflow in lines " << std::endl;
+            throw("Overflow in lines");
+        }
+        if(_lines[i] == nullptr)
+        {
+            _lines[i] = std::make_shared<track_line>( fully_visible ? num_cols : 4, i, static_cast<track_event_type>(rand() % 6));
+            _lines[i]->click_cbk = &cell_click_callback;
+
+        }
+        return _lines[i];
     }
 
     // track content constructor
     track_content(size_t num_lines = 64, size_t num_cols = 4) :
-        active_dynamic_list(
-            std::make_shared<active_cell_composer<track_line>>(num_lines,
-                                                               [&, num_lines, num_cols](size_t i) -> std::shared_ptr<track_line> {return make_line(i, num_lines, num_cols);}
-            )), num_cols(num_cols)
+        dynamic_list(
+            share(active_cell_composer(num_lines, [this](size_t i) { return make_line(i);}))
+            ),
+        num_cols(num_cols),
+        _lines(num_lines, nullptr)
     {
     }
 
     void set_num_lines(size_t num_lines);
     void set_num_cols(size_t cols);
+
+    // display only 4 cells or full track
     void toggle_show();
     void show_fully(bool b);
 
+    // getters setters for text
     std::u32string_view get_at(size_t line, size_t col);
     std::string get_as_string_at(size_t line, size_t col);
     void set_at(size_t line, size_t col, std::string_view text);
     void set_at(size_t line, size_t col, std::string text);
+    // clear all cells in track
     void clear_cells();
 
+    //controls
     bool key(context const&, key_info) override;
-    bool click(context const& ctx, mouse_button btn) override;
     void click_select(context const&ctx, mouse_button btn, size_t line, size_t col);
     void unselect();
 
+    // cell handle
     std::shared_ptr<track_cell>& get_cell_at(size_t line, size_t col);
     std::shared_ptr<track_cell>& get_main_cell();
-
-    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> callback =
-            [](size_t, size_t, std::string_view){};
 
     bool fully_visible = false;
 
     cell_selector selection;
-    cell_animator animator;
+    //cell_animator animator;
 
     size_t num_cols;
+
+    std::vector<std::shared_ptr<track_line>> _lines;
+
+    std::function<void(context const& ctx, mouse_button btn, size_t l, size_t c)> cell_click_callback =
+            [&](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);};
+    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
+            [](size_t, size_t, std::string_view){};
 protected:
 
     void display_visible();

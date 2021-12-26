@@ -5,20 +5,19 @@
 #include<elements.hpp>
 #include<utilities/paint_utilities.h>
 
-#include<tracker/jtracker.h>
 #include<models/track_event.h>
+#include<tracker/jtracker_theme.h>
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
 
-class custom_text_box : public basic_input_box
+class cell_text_box : public basic_input_box
 {
 public:
-    custom_text_box() : basic_input_box()
+    cell_text_box() : basic_input_box("" ,
+                                      jtracker::theme.cell_box_font )
     {
     }
-
-
 private:
 };
 
@@ -117,6 +116,7 @@ public:
         {
             std::cout << "on text : " << v << std::endl;
         };
+
     }
 
     virtual view_limits limits(basic_context const&) const override
@@ -128,9 +128,8 @@ public:
 
     bool click(context const& ctx, mouse_button btn) override
     {
-        std::cout << "cell click " << std::endl;
-        text_box.click(ctx, btn);
         on_click(ctx, btn);
+        text_box.click(ctx, btn);
         return true;
     }
 
@@ -138,12 +137,12 @@ public:
     void set_text(std::string_view s) {text_box.set_text(s);}
     std::u32string_view get_text()  {return text_box.get_text();}
 
-    using click_function = std::function<bool(context const& ctx, mouse_button btn)>;
+    using click_function = std::function<void(context const& ctx, mouse_button btn)>;
     click_function on_click = [](context const &, mouse_button){ return false; };
 
     float _width;
     //basic_input_box text_box;
-    basic_input_box text_box;
+    cell_text_box text_box;
     cell_background background;
 };
 

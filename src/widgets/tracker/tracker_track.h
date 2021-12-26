@@ -8,6 +8,7 @@
 
 #include<widgets/track_content.h>
 #include<widgets/track_base.h>
+#include<widgets/spinbox.h>
 using namespace cycfi::elements;
 
 namespace jtracker {
@@ -17,24 +18,37 @@ class tracker_track :
         public array_composite<2, vtile_element>
 {
 public:
-    inline auto make_buttons_tile()
+    inline auto make_buttons_tile(size_t track_index)
     {
-        auto clear_but = icon_button(icons::cancel, 1);
+        auto clear_but = icon_button(icons::cancel, 1, theme.clear_buttons_color);
         clear_but.on_click = [&](bool) {t_content.clear_cells();};
-        auto resize_but = icon_button(icons::resize_horizontal, 1);
+        auto resize_but = toggle_icon_button(icons::resize_horizontal, 1);
+
         resize_but.on_click = [&](bool) {
-            std::cout << " resize track " << std::endl;
+            t_content.end_focus();
             t_content.toggle_show();
-            jtracker::tracker_app::get_instance()->_view.layout();
-            jtracker::tracker_app::get_instance()->_view.refresh();
+            this->end_focus();
+            focus(1);
+            begin_focus();
         };
-        return htile( fixed_size_label<4>("tk 1"),resize_but, clear_but );
+
+        auto col_number_spin = fixed_width_spinbox<size_t, 70>(spin_controller<size_t>(4, std::numeric_limits<size_t>::max(), 8, 1));
+        col_number_spin.on_change = [&](size_t n)
+        {
+          t_content.set_num_cols(n);
+        };
+
+        return vtile(htile(
+                    fixed_size_label<8>(std::string("track " + std::to_string(track_index))),
+                    resize_but,
+                    clear_but,
+                    col_number_spin
+                    ), vspacer(5));
     }
 
-    tracker_track(size_t num_line = 8, size_t num_cols = 4,
-          std::function<void(size_t, size_t, std::string_view)>
-          f = [](size_t, size_t, std::string_view){}) :
-    array_composite<2, vtile_element>(vtile(make_buttons_tile(), link(t_content) ))
+    tracker_track(size_t track_index = 0, size_t num_line = 8, size_t num_cols = 4) :
+    array_composite<2, vtile_element>(vtile(make_buttons_tile(track_index), link(t_content) ) )
+
     {
         t_content.set_num_cols(num_cols);
         t_content.set_num_lines(num_line);
@@ -42,14 +56,13 @@ public:
 
     bool click(context const& ctx, mouse_button btn)
     {
-        std::cout << "tracker track click " << btn.pos.x << " " << btn.pos.y << std::endl;
-        // check if it should target the bar click or the track click
         context rctx {ctx, ctx.bounds};
         rctx.bounds.top += this->at(0).limits(ctx).max.y;
         if(rctx.bounds.includes(btn.pos))
         {
             return this->at(1).click(rctx, btn);
         }
+
         return array_composite<2, vtile_element>::click(ctx, btn);
     }
 

@@ -4,37 +4,44 @@ template<typename T>
 view_limits spinbox<T>::limits(basic_context const& ctx) const
 {
     point p = measure_text(ctx.canvas, "1", theme().label_font);
-    p.y *= 1.35;
+    p.y *= height_index;
     return {{40, p.y}, {full_extent, p.y}};
 }
 
 template<typename T>
 void spinbox<T>::draw(context const& ctx)
 {
-    const float mult = 1.35f;
     auto size = ctx.bounds.size();
     auto pos = ctx.bounds.top_left();
     auto& thm = get_theme();
-    float font_size = thm.icon_font._size * mult;
+    float font_size = thm.icon_font._size * height_index;
+
+    ctx.canvas.fill_color(jtracker::theme.spin_background_color);
+    ctx.canvas.fill_round_rect(ctx.bounds, 8.0f);
+    ctx.canvas.fill();
 
     left_arrow_bounds = ctx.bounds;
     left_arrow_bounds.width( size.x / 4.0f) ;
     right_arrow_bounds = ctx.bounds;
     right_arrow_bounds.left =  pos.x + size.x - (size.x / 4.0f);
 
-    color c = (focused == 1) ? colors::light_salmon.opacity( ((clicked) ? 1.0 : 0.75) ) : colors::dark_slate_blue;
+    color c = (focused == 1) ? jtracker::theme.spin_left_arrow_color.opacity(
+                                   ((clicked) ? 1.0 : 0.75) ) :
+                               jtracker::theme.spin_sleeping_arrow_color;
     draw_icon(ctx.canvas, left_arrow_bounds, icons::left_dir, font_size, c);
-    c = (focused == 2) ? colors::light_blue.opacity( ((clicked) ? 1.0 : 0.75)  ) : colors::dark_slate_blue;
+    c = (focused == 2) ? jtracker::theme.spin_right_arrow_color.opacity(
+                             ((clicked) ? 1.0 : 0.75)  ) :
+                         jtracker::theme.spin_sleeping_arrow_color;
     draw_icon(ctx.canvas, right_arrow_bounds, icons::right_dir, font_size, c) ;
 
-    const point p = measure_text(ctx.canvas, _text, get_theme().label_font);
     const point middle(pos.x + (size.x / 2.0f), pos.y + (size.y / 2.0f) );
-    const point t_point(middle.x - (p.x / 2.0f), ( middle.y + (p.y / 4.0f)) );
+    const point t_point(middle.x, ( middle.y) );
 
-    ctx.canvas.stroke_color(colors::antique_white);
+
+    ctx.canvas.stroke_color(jtracker::theme.spin_text_color);
     ctx.canvas.stroke_text(_text,t_point );
 
-    ctx.canvas.stroke_color(colors::dark_slate_blue);
+    ctx.canvas.stroke_color(jtracker::theme.spin_borders_color);
     ctx.canvas.stroke_round_rect(ctx.bounds, 8.0f);
     ctx.canvas.stroke();
 }

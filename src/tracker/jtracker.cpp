@@ -19,12 +19,18 @@ tracker_app::tracker_app(int argc, char *argv[]) :
     _win.on_close = [this](){
         this->stop();
     };
+
+}
+
+cell_animator& tracker_app::get_cell_animation()
+{
+    return get_instance()->_cell_animation;
 }
 
 tracker_app* tracker_app::app_ = nullptr;
 
 // Main window background color
-cycfi::artist::color bkd_color = cycfi::artist::rgba(35, 35, 37, 255);
-cycfi::elements::box_element background = box(bkd_color);
+cycfi::elements::box_element background = box(jtracker::theme.app_background_color);
+
 
 }

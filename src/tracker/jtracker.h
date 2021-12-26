@@ -3,6 +3,8 @@
 
 #include<elements.hpp>
 #include<iostream>
+#include<animations/cell_animator.h>
+#include<tracker/jtracker_theme.h>
 
 using namespace cycfi::elements;
 
@@ -11,7 +13,6 @@ namespace jtracker {
 // Main window background color
 extern cycfi::artist::color bkd_color;
 extern box_element background;
-
 
 // App singleton
 class tracker_app : public app
@@ -22,6 +23,10 @@ public:
 
     window _win;
     view _view;
+
+    // Animation utilities
+    cell_animator _cell_animation;
+    static cell_animator& get_cell_animation();
 
     void refresh()
     {
@@ -47,6 +52,9 @@ inline auto make_base_layer()
 {
     rect pad(0, 0, 1920, 1080);
 }
+
+// to reduce verbosity
+inline tracker_app *get_app() {return tracker_app::get_instance();}
 
 }
 

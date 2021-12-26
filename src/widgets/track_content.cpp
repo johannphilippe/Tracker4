@@ -15,7 +15,9 @@ void track_content::toggle_show()
 
 void track_content::set_num_lines(size_t num_lines)
 {
-    active_dynamic_list<track_line>::resize(num_lines);
+    if(num_lines == _lines.size()) return;
+    resize(num_lines);
+    _lines.resize(num_lines);
 }
 
 void track_content::set_num_cols(size_t cols)
@@ -23,7 +25,9 @@ void track_content::set_num_cols(size_t cols)
     if(cols == num_cols) return;
     num_cols = cols;
 
-    for(auto & it : get_composer()->_rows)
+    if(!fully_visible) return;
+
+    for(auto & it : _lines)
     {
         if(it == nullptr) break;
         it->set_num_cols(cols);
@@ -32,14 +36,14 @@ void track_content::set_num_cols(size_t cols)
 
 std::u32string_view track_content::get_at(size_t line, size_t col)
 {
-    if(line >= get_composer()->_rows.size() || col >= num_cols)
+    if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     return get_cell_at(line, col)->get_text();
 }
 
 std::string track_content::get_as_string_at(size_t line, size_t col)
 {
-    if(line >= get_composer()->_rows.size() || col >= num_cols)
+    if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     std::u32string_view v = get_cell_at(line, col)->get_text();
     return std::string(v.begin(), v.end());
@@ -47,37 +51,29 @@ std::string track_content::get_as_string_at(size_t line, size_t col)
 
 void track_content::set_at(size_t line, size_t col, std::string_view text)
 {
-    if(line >= get_composer()->_rows.size() || col >= num_cols)
+    if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     get_cell_at(line, col)->set_text(text);
 }
 
 void track_content::set_at(size_t line, size_t col, std::string text)
 {
-    if(line >= get_composer()->_rows.size() || col >= num_cols)
+    if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     get_cell_at(line, col)->set_text(text);
 }
 
 void track_content::clear_cells()
 {
-    for(auto & it : get_composer()->_rows)
+    for(auto & it : _lines)
         for(auto & it2 : it->cells)
         it2->set_text("");
 
 }
 
-/*
-
-bool track_content::key(const context &ctx, key_info k)
-{
-}
-
-*/
 bool track_content::key(context const& ctx, key_info k)
 {
-    std::cout << "key in tradck content " << std::endl;
-    if(!selection.has_selection) return true;// vtile_composite::key(ctx, k);
+    if(!selection.has_selection) return true;
     cell_selection old = selection.selected[selection.current_cell_index];
     cell_selection new_sel = old;
 
@@ -88,7 +84,8 @@ bool track_content::key(context const& ctx, key_info k)
         selection.is_editing = false;
         end_focus();
         focus(selection.main_selected_line());
-        get_composer()->_rows[selection.main_selected_line()]->focus(selection.main_selected_column());
+        // +1 to avoid the label at the beginning of the line
+        _lines[selection.main_selected_line()]->focus(selection.main_selected_column() + 1);
         get_main_cell()->focus(1);
         begin_focus();
         ctx.view.refresh();
@@ -99,15 +96,17 @@ bool track_content::key(context const& ctx, key_info k)
         if(old.line_index == new_sel.line_index && old.column_index == new_sel.column_index) return;
         for(auto & it : selection.selected)
         {
-            get_cell_at(it.line_index, it.column_index)->background.unselect();
-            animator.push_back(get_cell_at(it.line_index, it.column_index));
+            if(it.column_index < _lines[it.line_index]->cells.size()) {
+                get_cell_at(it.line_index, it.column_index)->background.unselect();
+                tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+            }
         }
 
         selection.clear();
         selection.select_main(new_sel);
         get_cell_at(selection.main_selected_line(), selection.main_selected_column())->background.select();
-        animator.push_back(get_cell_at(selection.main_selected_line(), selection.main_selected_column()));
-        animator.animate(v);
+        tracker_app::get_cell_animation().push_back(get_cell_at(selection.main_selected_line(), selection.main_selected_column()));
+        tracker_app::get_cell_animation().animate(v);
 
         do_focus();
     };
@@ -121,7 +120,8 @@ bool track_content::key(context const& ctx, key_info k)
       } else if(new_sel.line_index > 0)
       {
           new_sel.line_index--;
-          new_sel.column_index = get_composer()->_rows[new_sel.line_index]->size() - 1;
+          // -2 here because of the static label at the begining of the line
+          new_sel.column_index = _lines[new_sel.line_index]->size() - 2;
           update_selection();
       }
     };
@@ -129,11 +129,11 @@ bool track_content::key(context const& ctx, key_info k)
     auto next_cell = [&]()
     {
         if(new_sel.column_index <
-                get_composer()->_rows[new_sel.line_index]->cells.size() - 1)
+                _lines[new_sel.line_index]->cells.size() - 1)
         {
             new_sel.column_index++;
             update_selection();
-        } else if(new_sel.line_index < get_composer()->_rows.size() - 1)
+        } else if(new_sel.line_index < _lines.size() - 1)
         {
             new_sel.line_index++;
             new_sel.column_index = 0;
@@ -147,7 +147,6 @@ bool track_content::key(context const& ctx, key_info k)
         case key_code::left:
         case key_code::right:
         {
-            std::cout << "forward left right " << std::endl;
             return get_main_cell()->text_box.key(ctx, k);
         }
         default:
@@ -183,8 +182,7 @@ bool track_content::key(context const& ctx, key_info k)
     }
     case key_code::down:
     {
-        if(new_sel.line_index < (get_composer()->_rows.size() - 1)) {
-            std::cout << "still going down " << new_sel.line_index << std::endl;
+        if(new_sel.line_index < (_lines.size() - 1)) {
             new_sel.line_index++;
             update_selection();
         }
@@ -219,7 +217,6 @@ bool track_content::key(context const& ctx, key_info k)
 
 void track_content::click_select(context const&, mouse_button btn, size_t line, size_t col)
 {
-    std::cout << "click : " << line << " " << col << std::endl;
     if(btn.down) {
         view &v = jtracker::tracker_app::get_instance()->_view;
 
@@ -227,14 +224,16 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
         {
             for(auto & it : selection.selected)
             {
-                get_cell_at(it.line_index, it.column_index)->background.unselect();
-                animator.push_back(get_cell_at(it.line_index, it.column_index));
+                if(it.column_index < _lines[it.line_index]->cells.size()) {
+                    get_cell_at(it.line_index, it.column_index)->background.unselect();
+                    tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+                }
             }
             selection.selected.clear();
             selection.select_main(line, col);
             get_cell_at(line, col)->background.select();
-            animator.push_back(get_cell_at(line, col));
-            animator.animate(v);
+            tracker_app::get_cell_animation().push_back(get_cell_at(line, col));
+            tracker_app::get_cell_animation().animate(v);
         };
 
         // find path of cells to the current one
@@ -244,7 +243,7 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             for(auto & it : selection.selected)
             {
                 get_cell_at(it.line_index, it.column_index)->background.unselect();
-                animator.push_back(get_cell_at(it.line_index, it.column_index));
+                tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
             }
 
             selection.clear();
@@ -265,9 +264,32 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             for(auto & it : selection.selected)
             {
                 get_cell_at(it.line_index, it.column_index)->background.select();
-                animator.push_back(get_cell_at(it.line_index, it.column_index));
+                tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
             }
-            animator.animate(v);
+            tracker_app::get_cell_animation().animate(v);
+        };
+
+        auto alt_selection = [&]()
+        {
+          for(size_t c = 0; c < _lines[line]->cells.size(); c++ )
+          {
+             int sel = selection.is_selected(line, c);
+             if(sel == -1)
+             {
+                 selection.selected.push_back(cell_selection(line, c));
+                 get_cell_at(line, c)->background.select();
+                 tracker_app::get_cell_animation().push_back(get_cell_at(line, c));
+             } else if(sel != - 1)  // != - 1
+             {
+                 get_cell_at(line, c)->background.unselect();
+                 tracker_app::get_cell_animation().push_back(get_cell_at(line, c));
+                 selection.remove_at(sel);
+             }
+          }
+
+          tracker_app::get_cell_animation().animate(v);
+
+          selection.select_main(line, col);
         };
 
         if(btn.modifiers == 0)
@@ -283,8 +305,8 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
                 //lines[selection.selected[sel].line_index]->
                 //        cells[selection.selected[sel].column_index]->background.unselect();
                 get_cell_at(c_sel.line_index, c_sel.column_index)->background.unselect();
-                animator.push_back(get_cell_at(c_sel.line_index, c_sel.column_index));
-                animator.animate(v);
+                tracker_app::get_cell_animation().push_back(get_cell_at(c_sel.line_index, c_sel.column_index));
+                tracker_app::get_cell_animation().animate(v);
                 selection.remove_at(sel);
             }
             else
@@ -292,8 +314,8 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             // Main selected should be the last one
                 selection.select_main(line, col);
                 get_cell_at(selection.selected.back().line_index, selection.selected.back().column_index)->background.select();
-                animator.push_back(get_cell_at(selection.selected.back().line_index, selection.selected.back().column_index));
-                animator.animate(v);
+                tracker_app::get_cell_animation().push_back(get_cell_at(selection.selected.back().line_index, selection.selected.back().column_index));
+                tracker_app::get_cell_animation().animate(v);
             }
 
         } else if(btn.modifiers & mod_shift)
@@ -301,14 +323,11 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             if(!selection.has_selection)
                 return simple_select();
             shift_selection();
+        } else if(btn.modifiers & mod_alt)
+        {
+            alt_selection();
         }
     }
-}
-
-bool track_content::click(const context &ctx, mouse_button btn)
-{
-    std::cout << "track ontent click !!! " << std::endl;
-    return active_dynamic_list<track_line>::click(ctx, btn);
 }
 
 void track_content::unselect()
@@ -317,39 +336,36 @@ void track_content::unselect()
    if(selection.is_editing)
    {
        selection.is_editing = false;
-       //lines[selection.main_selected_line()]->
-       //        cells[selection.main_selected_column()]->text_box.end_focus();
        get_main_cell()->text_box.end_focus();
        v.refresh(*get_main_cell());
        return;
    }
    for(auto & it : selection.selected) {
        get_cell_at(it.line_index, it.column_index)->background.unselect();
-       animator.push_back(get_cell_at(it.line_index, it.column_index));
+       tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
    }
 
-   animator.animate(v);
+   tracker_app::get_cell_animation().animate(v);
    selection.clear();
 }
 
 std::shared_ptr<track_cell>& track_content::get_cell_at(size_t line, size_t col)
 {
-    return get_composer()->_rows[line]->cells[col];
+    return _lines[line]->cells[col];
 }
 
 std::shared_ptr<track_cell>& track_content::get_main_cell()
 {
-    return get_composer()->_rows[selection.main_selected_line()]->
+    return _lines[selection.main_selected_line()]->
             cells[selection.main_selected_column()];
 }
 
 void track_content::display_visible()
 {
-    if(fully_visible)
+    for(auto & it : _lines)
     {
-        this->set_num_cols(num_cols);
-    } else
-    {
-        this->set_num_cols(4);
+        if(it == nullptr) continue;
+        it->set_num_cols((fully_visible) ? num_cols : 4);
     }
+    update();
 }

@@ -1,10 +1,10 @@
 #ifndef CURVE_EDITOR_VIEW_H
 #define CURVE_EDITOR_VIEW_H
 
-#include<tracker/jtracker.h>
 #include<elements.hpp>
 #include<widgets/curve_editor.h>
 #include<widgets/custom_radio.h>
+#include<tracker/jtracker.h>
 
 using namespace cycfi::elements;
 

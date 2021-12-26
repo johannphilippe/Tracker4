@@ -4,6 +4,7 @@
 #include<elements.hpp>
 #include<utilities/string_utilities.h>
 #include<utilities/maths_utilities.h>
+#include<tracker/jtracker.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -25,6 +26,8 @@ class spinbox : public tracker<>
 {
 
 public:
+
+    constexpr static const float height_index = 1.55f;
 
     spinbox(spin_controller<T> control_) : tracker<>(), controller(control_),
         _text(std::to_string(controller.value)),
@@ -83,6 +86,23 @@ private:
     rect left_arrow_bounds, right_arrow_bounds;;
     bool clicked;
 
+    std::string name;
+    bool labeled = false;
+
+};
+
+template<typename T, size_t Width>
+class fixed_width_spinbox : public spinbox<T>
+{
+public:
+    fixed_width_spinbox(spin_controller<T> controller_) :
+        spinbox<T>(controller_)
+    {}
+    view_limits limits(basic_context const& ctx) const override
+    {
+        view_limits l = spinbox<T>::limits(ctx);
+        return {{l.min.x, l.min.y}, {Width, l.max.y}};
+    }
 };
 
 template<typename T>
@@ -92,5 +112,7 @@ inline auto make_labeled_spinbox(std::string text, spin_controller<T> ctrl, std:
     c.on_change = on_change;
     return group(text, top_margin(40, margin({1,1,1,1}, vtile(hstretch(2, c)) ) ));
 }
+
+
 
 #endif // SPINBOX_H

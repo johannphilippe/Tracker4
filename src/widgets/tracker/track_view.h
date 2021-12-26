@@ -29,7 +29,17 @@ class track_view_bar : public array_composite<2, layer_element>
 {
 public:
     track_view_bar() :
-        array_composite<2, layer_element>(pane("Track controls", htile( link(seq_nbr), link(track_nbr), link(line_nbr) ))) {}
+        array_composite<2, layer_element>(pane("Track controls",
+                                               htile(
+                                                   vtile(expandable_label("Sequence"),
+                                                         link(seq_nbr)),
+                                                   hspacer(5),
+                                                   vtile(expandable_label("Tracks"),
+                                                         link(track_nbr)),
+                                                   hspacer(5),
+                                                   vtile(expandable_label("Lines"),
+                                                         link(line_nbr) )))) {}
+
     track_bar_spin track_nbr, seq_nbr, line_nbr;
 };
 
@@ -44,10 +54,20 @@ public:
 class main_cell_editor_layout : public array_composite<2, layer_element>
 {
 public:
-    main_cell_editor_layout() : array_composite<2, layer_element>(layer( link(editor), box(get_theme().frame_color)))
+
+    main_cell_editor_layout() :
+        array_composite<2, layer_element>(layer(  margin({5,5,5, 5}, align_center_middle( link(editor) )),
+                                                  rbox(colors::dark_orchid.opacity(0.4), 5)))
     {}
 
     main_cell_editor editor;
+
+    view_limits limits(basic_context const& ctx) const override
+    {
+        view_limits l = editor.limits(ctx);
+        l.max.y *= 1.5;
+        return l;
+    }
 };
 
 class track_set : public htile_composite
@@ -58,7 +78,7 @@ public:
 
     inline auto make_separator()
     {
-        return hspacer(15);
+        return hspacer(7);
     }
 
     void set_num_tracks(size_t number)
@@ -85,8 +105,14 @@ public:
             if(std::holds_alternative<tracker_track_ptr>(it))
             {
                 tracker_track_ptr t_ptr(std::get<tracker_track_ptr>(it));
-                if(t_ptr->t_content.get_composer()->_rows.size() != lines)
+                if(t_ptr->t_content._lines.size() != lines)
                     t_ptr->t_content.set_num_lines(lines);
+            }
+            else if(std::holds_alternative<sniper_track_ptr>(it))
+            {
+                sniper_track_ptr t_ptr(std::get<sniper_track_ptr>(it));
+                if(t_ptr->sn_content.num_lines != lines)
+                    t_ptr->sn_content.set_num_lines(lines);
             }
         }
     }
@@ -96,17 +122,22 @@ public:
         switch (t) {
         case track_type::tracker_track:
         {
-            tracker_track_ptr t_ptr(new tracker_track(64, 8));
+            tracker_track_ptr t_ptr(new tracker_track(tracks.size(),64, 8));
             std::variant<tracker_track_ptr, sniper_track_ptr > v;
             v = t_ptr;
             tracks.push_back(v);
-            push_back(share(htile(link(*t_ptr), make_separator())));
+            push_back(share(htile(
+                                layer(
+                                    link(*t_ptr),
+                                    rbox(jtracker::theme.track_background_color)
+                                    ),
+                                make_separator())));
 
         break;
         }
         case track_type::sniper_track:
         {
-            sniper_track_ptr t_ptr(new sniper_track());
+            sniper_track_ptr t_ptr(new sniper_track(tracks.size()));
             std::variant<tracker_track_ptr, sniper_track_ptr> v;
             v = t_ptr;
             tracks.push_back(v);
@@ -134,14 +165,15 @@ public:
 
     view_stretch stretch() const override
     {
-        return {full_extent, full_extent};
+        return {2, 2};
     }
 
 
     view_limits limits(basic_context const& ctx) const override
     {
-        //return {{full_extent, full_extent}, {full_extent, full_extent}};
-        return htile_composite::limits(ctx);
+        view_limits l  = htile_composite::limits(ctx);
+        l.max = {full_extent, full_extent};
+        return l;
     }
 
     std::vector<std::variant<tracker_track_ptr, sniper_track_ptr>> tracks;
@@ -153,11 +185,17 @@ public:
     track_view() :
         array_composite<3, vtile_element>(vtile(
                                               link(bar),
-                                              link(text_box),
-                                              scroller(
-                                                  margin({5, 20, 5, 30},
-                                                         link(t_set)
-                                                         )
+                                              vtile(vspacer(8), link(text_box), vspacer(8)),
+                                              hold(
+                                                  share(
+                                                      scroller(
+                                                          margin({5, 20, 5, 30},
+                                                                 link(
+                                                                     t_set
+                                                                     )
+                                                                 )
+                                                          )
+                                                      )
                                                   )
                                               )
                                           )
@@ -168,28 +206,29 @@ public:
             t_set.set_num_lines(bar.line_nbr.get_value());
             jtracker::tracker_app::get_instance()->_view.refresh(*this);
         };
-        bar.track_nbr.set_value(8);
+        bar.track_nbr.set_value(2);
         t_set.set_num_tracks(bar.track_nbr.get_value());
 
         bar.line_nbr.set_value(16);
         t_set.set_num_lines(bar.line_nbr.get_value());
+
         bar.line_nbr.on_change = [&](size_t l)
         {
           t_set.set_num_lines(l);
           view &v = jtracker::tracker_app::get_instance()->_view;
-          jtracker::tracker_app::get_instance()->_view.post([&](){
-              v.layout();
-              v.refresh();
-          });
+          //jtracker::tracker_app::get_instance()->_view.post([&](){
+          v.layout();
+          v.refresh();
+          //});
         };
     }
 
     view_limits limits(basic_context const& ctx) const override
     {
-        view_limits l;
-        l.max.x = ctx.view_bounds().width();
-        l.max.y = ctx.view_bounds().height();
-        return l;
+        view_limits normal = array_composite<3, vtile_element>::limits(ctx);
+        point view_size = ctx.view.size();
+        normal.max = view_size;
+        return normal;
     }
 
 

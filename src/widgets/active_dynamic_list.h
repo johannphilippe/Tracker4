@@ -15,7 +15,7 @@ class active_dynamic_list : public element
 {
 public:
 
-   using composer_ptr = std::shared_ptr<active_cell_composer< T >>;
+   using composer_ptr = std::shared_ptr<active_cell_composer>;
 
                               active_dynamic_list(composer_ptr composer)
                                : _composer(composer)

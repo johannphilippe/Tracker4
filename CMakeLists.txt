@@ -30,11 +30,17 @@ set(ELEMENTS_APP_ID "com.johannphilippe.tracker")
 set(ELEMENTS_APP_VERSION "1.0")
 
 set(ELEMENTS_APP_SOURCES 
+      #Animations
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/animations/cell_animator.h
+
+      # Controllers
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/controllers/cell_selection_controller.h
 
       # Models
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve_point.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/track_event.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/models/sniper_track_event.h
 
       # Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/curve_editor.h
@@ -42,6 +48,8 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_radio.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_content.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_content.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_content.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_content.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_base.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_labels.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.h
@@ -73,6 +81,8 @@ set(ELEMENTS_APP_SOURCES
       # Global
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_theme.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.h
 
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
       )

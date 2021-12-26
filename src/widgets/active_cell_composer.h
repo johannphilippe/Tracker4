@@ -5,19 +5,17 @@
 #include<vector>
 using namespace cycfi::elements;
 
-template<typename T>
 class active_cell_composer : public cell_composer
 {
 
 public:
 
-    using cell_ptr = std::shared_ptr<T>;
-    using composer_function = std::function<std::shared_ptr<T>(size_t)>;
+    using cell_ptr = element_ptr;
+    using composer_function = std::function<element_ptr(size_t)>;
 
     active_cell_composer(size_t length, composer_function c) : cell_composer(),
         _size(length), _composer(c)
     {
-        _rows.resize(_size, nullptr);
     }
 
     std::size_t size() const override
@@ -27,22 +25,17 @@ public:
 
     void resize(size_t size)
     {
-        _rows.resize(_size);
         _size = size;
     }
 
     element_ptr compose(std::size_t index) override
     {
-        if(_rows[index] == nullptr)
-        {
-            _rows[index] = _composer(index);
-        }
-        return _rows[index];
+        return _composer(index);
     }
 
     limits width_limits(const basic_context &ctx) const override
     {
-        auto lim =  _rows[0]->limits(ctx);
+        auto lim = const_cast<active_cell_composer*>(this)->compose(0)->limits(ctx);
         return {lim.min.x, lim.max.x};
     }
 
@@ -52,8 +45,8 @@ public:
         return lim.max.y;
     }
 
+
     size_t _size;
-    std::vector< cell_ptr > _rows;
 
     composer_function _composer;
 };
