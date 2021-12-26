@@ -36,6 +36,8 @@ struct tracker_theme
         * FONTS
         ***********************/
         t.cell_box_font						=	font_descr{ "Open Sans", 14.0 };
+        t.sniper_track_font					=	font_descr{ "Roboto Light", 12.0 };
+
         return t;
     }
 
@@ -59,7 +61,6 @@ struct tracker_theme
         t.track_background_color			=	colors::corn_silk;
         t.sniper_track_background_color		= 	colors::salmon;
         t.sniper_track_lines_color			= 	colors::wheat;
-
 
         /***********************
         * FONTS
@@ -97,6 +98,7 @@ struct tracker_theme
     ***********************/
 
     font_descr cell_box_font;
+    font_descr sniper_track_font;
 };
 
 // Probably needs to be mutable (not const or constexpr)

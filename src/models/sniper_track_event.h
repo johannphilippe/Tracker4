@@ -12,5 +12,17 @@ struct sniper_track_event
     bool selected = false;
 };
 
+struct sniper_track_drag_resize
+{
+    enum class mode
+    {
+        none = 0,
+        top = 1,
+        bottom = 2
+    };
+
+    mode resize_mode;
+    size_t index;
+};
 
 #endif // SNIPER_TRACK_EVENT_DATA_H

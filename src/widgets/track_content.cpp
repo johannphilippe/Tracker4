@@ -32,6 +32,7 @@ void track_content::set_num_cols(size_t cols)
         if(it == nullptr) break;
         it->set_num_cols(cols);
     }
+    resize_conditions.update_width = true;
 }
 
 std::u32string_view track_content::get_at(size_t line, size_t col)
@@ -367,5 +368,6 @@ void track_content::display_visible()
         if(it == nullptr) continue;
         it->set_num_cols((fully_visible) ? num_cols : 4);
     }
+    resize_conditions.update_width = true;
     update();
 }

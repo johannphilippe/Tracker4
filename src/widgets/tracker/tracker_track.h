@@ -30,6 +30,8 @@ public:
             this->end_focus();
             focus(1);
             begin_focus();
+            tracker_app::get_instance()->_view.layout();
+            tracker_app::get_instance()->refresh();
         };
 
         auto col_number_spin = fixed_width_spinbox<size_t, 70>(spin_controller<size_t>(4, std::numeric_limits<size_t>::max(), 8, 1));

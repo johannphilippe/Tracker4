@@ -55,9 +55,10 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_cell.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list_impl.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_cell_composer.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/dynamic_size_cell_composer.h
+      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list.h
+      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list_impl.h
+      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_cell_composer.h
 
       # Tracker Views
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h

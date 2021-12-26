@@ -9,10 +9,10 @@
 #include<widgets/custom_labels.h>
 #include<widgets/track_cell.h>
 #include<models/track_event.h>
-#include<widgets/active_dynamic_list.h>
 #include<animations/cell_animator.h>
 #include<tracker/jtracker.h>
 #include<controllers/cell_selection_controller.h>
+#include<widgets/dynamic_size_cell_composer.h>
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
@@ -94,7 +94,7 @@ public:
 /*
  * Represents a spreadsheet of dynamic cells
 */
-class track_content : public dynamic_list
+class track_content : public vdynamic_list
 {
 public:
 
@@ -117,8 +117,8 @@ public:
 
     // track content constructor
     track_content(size_t num_lines = 64, size_t num_cols = 4) :
-        dynamic_list(
-            share(active_cell_composer(num_lines, [this](size_t i) { return make_line(i);}))
+        vdynamic_list(
+            make_resizable_composer(num_lines, [this](size_t i) { return make_line(i);}, &resize_conditions)
             ),
         num_cols(num_cols),
         _lines(num_lines, nullptr)
@@ -162,6 +162,9 @@ public:
             [&](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);};
     std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
             [](size_t, size_t, std::string_view){};
+
+
+    resize_condition resize_conditions;
 protected:
 
     void display_visible();

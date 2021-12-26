@@ -16,6 +16,7 @@ void spinbox<T>::draw(context const& ctx)
     auto& thm = get_theme();
     float font_size = thm.icon_font._size * height_index;
 
+    // Background
     ctx.canvas.fill_color(jtracker::theme.spin_background_color);
     ctx.canvas.fill_round_rect(ctx.bounds, 8.0f);
     ctx.canvas.fill();
@@ -25,6 +26,7 @@ void spinbox<T>::draw(context const& ctx)
     right_arrow_bounds = ctx.bounds;
     right_arrow_bounds.left =  pos.x + size.x - (size.x / 4.0f);
 
+    // Arrow icons
     color c = (focused == 1) ? jtracker::theme.spin_left_arrow_color.opacity(
                                    ((clicked) ? 1.0 : 0.75) ) :
                                jtracker::theme.spin_sleeping_arrow_color;
@@ -37,10 +39,13 @@ void spinbox<T>::draw(context const& ctx)
     const point middle(pos.x + (size.x / 2.0f), pos.y + (size.y / 2.0f) );
     const point t_point(middle.x, ( middle.y) );
 
+    ctx.canvas.line_width(1);
 
+    // Text
     ctx.canvas.stroke_color(jtracker::theme.spin_text_color);
     ctx.canvas.stroke_text(_text,t_point );
 
+    // Borders
     ctx.canvas.stroke_color(jtracker::theme.spin_borders_color);
     ctx.canvas.stroke_round_rect(ctx.bounds, 8.0f);
     ctx.canvas.stroke();

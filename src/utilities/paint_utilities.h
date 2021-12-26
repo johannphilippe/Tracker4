@@ -9,6 +9,11 @@ namespace jtracker {
 
 namespace color_utilities {
 
+inline color invert_color(color c)
+{
+    return color(1.0 - c.red, 1.0 - c.green, 1.0 - c.blue, c.alpha);
+}
+
 struct color_difference
 {
     color_difference() = default;

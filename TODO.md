@@ -14,3 +14,14 @@
 # Animations 
 
 ~- Make a singleton for animations (equivalent to cell animator, but singleton so that there is no big perf troubles in the app)
+
+
+
+# Tracker track
+
+* Key to set a particular event (csound score etc)
+* Instrument list select
+
+
+# Sniper Track
+
