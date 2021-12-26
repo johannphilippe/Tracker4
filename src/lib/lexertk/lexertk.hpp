@@ -34,38 +34,41 @@
  * Note: This lexer has been taken from the ExprTk Library.      *
  *                                                               *
  *****************************************************************
- *	Johann Philippe, 2021 										 *
- * 	This file contains changes made in 2021	in order to 		 *
- * 	make this library able to process strings for syntax 		 *
- *  highlighting.		 										 *
- * 	It now takes Comments and Whitespaces in the token list. 	 *
- * 	Also it fixes the double quote string issue.				 *
- * TODO :														 *
- * - Create a client class to understand syntax from tokens		 *
+ *	Johann Philippe, 2021 					 *
+ * 	This file contains changes made in 2021	in order to 	 *
+ * 	make this library able to process strings for syntax 	 *
+ *  highlighting.		 				 *
+ * 	It now takes Comments and Whitespaces in the token list. *
+ * 	Also it fixes the double quote string issue.		 *
+ * TODO :							 *
+ * - Create a client class to understand syntax from tokens	 *
  * - Allow exceptions (example # comment in C/C++ must not be 	 *
  * parsed with comments) : solution could be to allow specify    *
- * For example with Constants like 								 *
- * lexertk::generator lexer(Comments::C_COMMENTS);				 *
- * lexertk::generator lexer(Comments::RUBY_COMMENTS); 			 *
- * lexertk::gererator lexer(Comments::LUA_COMMENTS);			 *
+ * For example with Constants like 				 *
+ * lexertk::generator lexer(Comments::C_COMMENTS);		 *
+ * lexertk::generator lexer(Comments::RUBY_COMMENTS); 		 *
+ * lexertk::gererator lexer(Comments::LUA_COMMENTS);		 *
    single and multi line comments - that would work everywhere   *
  * - Allow custom regex (for example ".." in Lua might be in     *
- * a specific color												 *
+ * a specific color						 *
  * - By default all tokens must be part of the list, may they    *
- * be UNDEFINED 												 *
+ * be UNDEFINED 						 *
  * - If I want to do scope analysis, it may be done recursively  *
- *
- * Ask more to the lexer : he must know keywords and lex them (...)
- * It's the lexer task to split tokens.
- * Then color association with tokens (call it a theme).
- * Then a custom painter that can have a last control on it.
- *
- * !Done Keywords would be faster with a Map Set (instead of an array)
- * or a tree
- * !Done Needs to implement macros as well (#includes)
- * !Done Add Comments recognition in Macros (prepocessor)
- * Add custom sequence of characters to be found after macro (before
- * other things)
+ *								 *
+ * Ask more to the lexer : he must know keywords and lex them 	 *
+ * (...)						       	 *
+ * It's the lexer task to split tokens.				 *
+ * Then color association with tokens (call it a theme).	 *
+ * Then a custom painter that can have a last control on it.	 *
+ *								 *
+ * !Done Keywords would be faster with a Map Set 		 *
+ * (instead of an array)					 *
+ * or a tree							 *
+ * !Done Needs to implement macros as well (#includes)		 *	
+ * !Done Add Comments recognition in Macros (prepocessor)	 *	
+ * Add custom sequence of characters to be found after macro 	 *	
+ * (before							 *
+ * other things)						 *
  *****************************************************************
 */
 
