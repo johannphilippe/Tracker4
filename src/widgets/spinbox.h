@@ -5,6 +5,7 @@
 #include<utilities/string_utilities.h>
 #include<utilities/maths_utilities.h>
 #include<tracker/jtracker.h>
+#include<iostream>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -29,6 +30,7 @@ public:
 
     constexpr static const float height_index = 1.55f;
 
+
     spinbox(spin_controller<T> control_) : tracker<>(), controller(control_),
         _text(std::to_string(controller.value)),
         on_change([&](T){}),
@@ -37,12 +39,22 @@ public:
         update_text();
     }
 
+    spinbox() : spinbox(spin_controller<T>(0, 1, 1, 1))
+    {}
+
     virtual view_limits limits(basic_context const& ctx) const override;
     void draw(context const &ctx) override;
     bool click(context const &ctx, mouse_button btn) override;
     bool cursor(context const &ctx, point p, cursor_tracking)  override;
     bool scroll(context const&ctx, point dir, point ) override;
     void drag(const context &ctx, mouse_button btn) override;
+    void long_click(context const& ctx, mouse_button btn, int _long_press);
+
+    void set_controller(spin_controller<T> ctrl)
+    {
+        this->controller = ctrl;
+        update_text();
+    }
 
     void increment()
     {
@@ -80,6 +92,8 @@ private:
         _text = jtracker::string::get_string<T>(controller.value);
     }
 
+    void click_event(context const &ctx, mouse_button &btn);
+
     std::string _text;
     int focused;
     point click_pos;
@@ -88,16 +102,14 @@ private:
 
     std::string name;
     bool labeled = false;
-
 };
 
 template<typename T, size_t Width>
 class fixed_width_spinbox : public spinbox<T>
 {
 public:
-    fixed_width_spinbox(spin_controller<T> controller_) :
-        spinbox<T>(controller_)
-    {}
+    fixed_width_spinbox(spin_controller<T> ctrl) : spinbox<T>(ctrl) {}
+    fixed_width_spinbox() : spinbox<T>() {}
     view_limits limits(basic_context const& ctx) const override
     {
         view_limits l = spinbox<T>::limits(ctx);

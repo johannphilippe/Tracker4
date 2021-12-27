@@ -1,9 +1,4 @@
-#include "sniper_track_content.h"
-
-void sniper_track_content::set_num_lines(size_t lines)
-{
-    num_lines = lines ;
-}
+﻿#include "sniper_track_content.h"
 
 void sniper_track_content::clear() {}
 
@@ -18,9 +13,12 @@ void sniper_track_content::draw(const context &ctx)
 {
     const float line_h = line_height();
 
+    rect track_bounds = ctx.bounds;
+    track_bounds.height(line_h * jtracker::data.number_of_lines);
+
     //Background
     ctx.canvas.fill_color(jtracker::theme.sniper_track_background_color);
-    ctx.canvas.fill_round_rect(ctx.bounds, 6);
+    ctx.canvas.fill_round_rect(track_bounds, 6);
     ctx.canvas.fill();
 
     auto size = ctx.bounds.size();
@@ -30,7 +28,7 @@ void sniper_track_content::draw(const context &ctx)
     float y = pos.y + line_h;
     ctx.canvas.line_width(0.1);
     ctx.canvas.stroke_color(jtracker::theme.sniper_track_lines_color.opacity(1));
-    for(size_t i = 1; i < num_lines; i++)
+    for(size_t i = 1; i < jtracker::data.number_of_lines; i++)
     {
         ctx.canvas.move_to(pos.x + line_offset, y);
         ctx.canvas.line_to(pos.x + size.x - line_offset, y);
@@ -39,7 +37,7 @@ void sniper_track_content::draw(const context &ctx)
 
     // Border
     ctx.canvas.stroke_color(colors::navajo_white);
-    ctx.canvas.stroke_round_rect(ctx.bounds, 6);
+    ctx.canvas.stroke_round_rect(track_bounds, 6);
     ctx.canvas.stroke();
 
 
@@ -49,16 +47,26 @@ void sniper_track_content::draw(const context &ctx)
         rect bnds = events[i].bounds;
         bnds.top += ctx.bounds.top;
         bnds.bottom += ctx.bounds.top;
-        if(bnds.top < ctx.bounds.top || bnds.bottom > ctx.bounds.bottom) continue;
+        bnds.left = ctx.bounds.left;
+        bnds.right = ctx.bounds.right;
+        //if(bnds.top < ctx.bounds.top || bnds.bottom > ctx.bounds.bottom) continue;
 
-        const color c = get_event_color(events[i].type).opacity(
+        const color event_color = get_event_color(events[i].type).opacity(
                     (events[i].selected ? 1 : 0.5) - (static_cast<int>(i) == _focused_event ? 0.0 : 0.2)
                     );
 
         // Event rect
-        ctx.canvas.fill_color(c);
+        ctx.canvas.fill_color(event_color);
         bnds.left += line_offset;
         bnds.right -= line_offset;
+        // if overf
+        std::cout << "bnds bot " << bnds.bottom << " " << ctx.bounds.bottom << " " << track_bounds.bottom << std::endl;
+        if(bnds.bottom > ctx.bounds.bottom)
+        {
+            bnds.bottom = ctx.bounds.bottom;
+            std::cout << "overflow " << std::endl;
+        }
+
         ctx.canvas.fill_round_rect(bnds, 6);
         ctx.canvas.fill();
         // if focused, bound rectangle
@@ -74,12 +82,14 @@ void sniper_track_content::draw(const context &ctx)
 
         // Events text indications
         ctx.canvas.line_width(1);
-        point middle(bnds.left + bnds.width() / 2, bnds.top + 5);
-        std::string txt("top : " + jtracker::string::get_string<float>(events[i].bounds.top) +
-                        " bottom : " + jtracker::string::get_string<float>(events[i].bounds.bottom) );
+        point middle(bnds.left + bnds.width() / 2, bnds.top + 10);
+        const float top_y = events[i].bounds.top / line_h;
+        const float bot_y = events[i].bounds.bottom / line_h;
+        std::string txt("top : " + jtracker::string::get_string<float>(top_y) +
+                        " bottom : " + jtracker::string::get_string<float>(bot_y) );
         ctx.canvas.stroke_color(
                     jtracker::color_utilities::invert_color(
-                        jtracker::theme.sniper_track_background_color).opacity(
+                        event_color).opacity(
                         _focused_event == static_cast<int>(i) ? 1.0 : 0.5
                         )
                     );
@@ -112,7 +122,6 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
                 _drag_resize_mode.index = i;
                 return i;
             }
-
             point p = btn.pos;
             p.y -= ctx.bounds.top;
             if(events[i].bounds.includes(p))
@@ -123,14 +132,13 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
 
     auto select_one = [&](size_t sel)
     {
-
       bool was_selected = events[sel].selected;
       for(size_t ix = 0; ix < events.size(); ix++)
       {
           if(ix == sel ) {
               events[ix].selected = true; //events[ix].selected;
           } else if(!was_selected)
-          {
+          {      
               events[ix].selected = false;
           }
       }
@@ -138,6 +146,7 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
 
     if(btn.down )
     {
+        // finds an event under the mouse
         if(int i = find_event(); i != -1)
         {
             if(_drag_resize_mode.resize_mode != sniper_track_drag_resize::mode::none)
@@ -148,9 +157,11 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
             {
                 events[i].selected = !events[i].selected;
             }
-            else
+            else // no modifiers
             {
+                std::cout << "was selected " << events[i].selected << std::endl;
                 select_one(i);
+                on_event(true, events[i]);
             }
             ctx.view.refresh();
             return true;
@@ -159,14 +170,17 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
 
         // no event found, create new one
         // 								Check if an event will fit
-        if (btn.pos.y <  (ctx.bounds.height() + ctx.bounds.top - 10)  )
+        const float line_h = jtracker::data.track_line_height;
+        if (btn.pos.y <  (ctx.bounds.height() + ctx.bounds.top - (line_h / 2) ) )
         {
-            sniper_track_event event{rect(ctx.bounds.left,  btn.pos.y - 10 - ctx.bounds.top,
-                                          ctx.bounds.right, btn.pos.y + 10 - ctx.bounds.top),
+
+            sniper_track_event event{rect(ctx.bounds.left,  btn.pos.y - (line_h / 2) - ctx.bounds.top,
+                                          ctx.bounds.right, btn.pos.y + (line_h / 2) - ctx.bounds.top),
                         static_cast<track_event_type>(rand() % 6), true};
             for(auto & it : events) it.selected = false;
             events.push_back(event);
             _focused_event = events.size() -1;
+            on_event(true, events.back());
             ctx.view.refresh(*this);
         }
     }
@@ -175,6 +189,13 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
 
 bool sniper_track_content::cursor(const context &ctx, point p, cursor_tracking status)
 {
+    if(status == cursor_tracking::leaving)
+    {
+        set_cursor(cursor_type::arrow);
+        ctx.view.refresh(*this);
+    }
+
+    // find bounds to change cursor for dragging resize
     auto find_up_low_bounds = [&](size_t ix) -> sniper_track_drag_resize::mode
     {
         const float top_y = events[ix].bounds.top + ctx.bounds.top;
@@ -188,12 +209,21 @@ bool sniper_track_content::cursor(const context &ctx, point p, cursor_tracking s
 
 
     _should_refresh = false;
+
     for(size_t i = 0; i < events.size(); i++)
     {
         if(find_up_low_bounds(i) != sniper_track_drag_resize::mode::none)
+        {
             set_cursor(cursor_type::v_resize);
+            _should_refresh = true;
+        }
         else
+        {
             set_cursor(cursor_type::cross_hair);
+            _should_refresh = true;
+        }
+
+        // select focused event
         rect bnds = events[i].bounds;
         bnds.top += ctx.bounds.top;
         bnds.bottom += ctx.bounds.top;
@@ -220,6 +250,8 @@ void sniper_track_content::drag(const context &ctx, mouse_button btn)
 {
     if(_focused_event == -1) return;
     _should_refresh = false;
+    // if trying to resize
+    const float line_h = jtracker::data.track_line_height;
     switch (_drag_resize_mode.resize_mode) {
     case sniper_track_drag_resize::mode::none:
     {
@@ -229,6 +261,9 @@ void sniper_track_content::drag(const context &ctx, mouse_button btn)
     {
         const float diff_top_y = btn.pos.y  - events[_focused_event].bounds.top - ctx.bounds.top;
         events[_drag_resize_mode.index].bounds.top += diff_top_y;
+        if(events[_drag_resize_mode.index].bounds.height() < line_h)
+            events[_drag_resize_mode.index].bounds.top -= (line_h - events[_drag_resize_mode.index].bounds.height());
+        on_event(true, events[_drag_resize_mode.index]);
         ctx.view.refresh(*this);
         return;
     }
@@ -236,6 +271,9 @@ void sniper_track_content::drag(const context &ctx, mouse_button btn)
     {
         const float diff_bottom_y = btn.pos.y  - events[_focused_event].bounds.bottom - ctx.bounds.top;
         events[_drag_resize_mode.index].bounds.bottom += diff_bottom_y;
+        if(events[_drag_resize_mode.index].bounds.height() < line_h)
+            events[_drag_resize_mode.index].bounds.bottom += (line_h - events[_drag_resize_mode.index].bounds.height());
+        on_event(true, events[_drag_resize_mode.index]);
         ctx.view.refresh(*this);
         return;
     }
@@ -250,14 +288,30 @@ void sniper_track_content::drag(const context &ctx, mouse_button btn)
             const float item_diff = diff_y - (events[_focused_event].bounds.height() / 2);
             _should_refresh = true;
             it.bounds.top += item_diff;
+            // This is top limit. When sequences are implemented, an event should be able to fit in two seqs,
+            // so allow overflow in top (if seq > 1) and bottom
+            // if those situations occurs, we should register those events as transversal across sequences
+            if(it.bounds.top < 0 && it.bounds.bottom > 0) {
+                it.bounds.top = 0;
+                break;
+            } else if(it.bounds.bottom + ctx.bounds.top > ctx.bounds.bottom
+                      &&
+                      it.bounds.top < ctx.bounds.bottom)
+            {
+                it.bounds.bottom = ctx.bounds.bottom - ctx.bounds.top;
+                break;
+            }
             it.bounds.bottom += item_diff;
         }
     }
-    if(_should_refresh) ctx.view.refresh(*this);
+    if(_should_refresh) {
+        on_event(true, events[_focused_event]);
+        //ctx.view.refresh();
+    }
 }
 
 
-bool sniper_track_content::scroll(context const& ctx, point dir, point p)
+bool sniper_track_content::scroll(context const& ctx, point dir, point)
 {
     std::cout << "scroll event passed to canvas " << std::endl;
     _should_refresh = false;
@@ -279,6 +333,6 @@ bool sniper_track_content::scroll(context const& ctx, point dir, point p)
 view_limits sniper_track_content::limits(const basic_context &) const
 {
     // get the font to make the line height equivalent to tracker track
-    const float line_h = line_height() * num_lines;
+    const float line_h = line_height() * jtracker::data.number_of_lines;
     return {{250, line_h}, {300, line_h}};
 }

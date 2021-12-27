@@ -56,9 +56,12 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_cell.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/dynamic_size_cell_composer.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_box.h
       #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list.h
       #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list_impl.h
       #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_cell_composer.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.cpp
 
       # Tracker Views
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
@@ -69,6 +72,8 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/sniper_track.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/jtracker_global_widgets.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/jtracker_global_widgets.cpp
 
       # Maths
       ${CMAKE_CURRENT_SOURCE_DIR}/src/maths/cubic_spline.h
@@ -84,6 +89,7 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_theme.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.cpp
 
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
       )

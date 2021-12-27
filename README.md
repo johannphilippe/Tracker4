@@ -6,8 +6,9 @@ In development version of new jo_tracker. The new name is not found yet.
 
 This repository includes some open-source libraries source code : 
 
-* [Nlohmann::json](https://github.com/nlohmann/json)
-* [LexerTK](https://github.com/ArashPartow/lexertk) - the version included is modified. 
+* [Nlohmann::json](https://github.com/nlohmann/json) - MIT License
+* [LexerTK](https://github.com/ArashPartow/lexertk) - the version included is modified. - MIT License
+* [Portable File Dialog](https://github.com/samhocevar/portable-file-dialogs) - DWTYWTPL
 
 ## Dependencies
 

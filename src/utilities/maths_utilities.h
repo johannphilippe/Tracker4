@@ -10,8 +10,8 @@ namespace maths
 template<typename T>
 T limit_number(T min, T max, T val)
 {
-    if(val > max) return max;
-    else if(val < min) return min;
+    if(val >= max) return max;
+    else if(val <= min) return min;
     else return val;
 }
 

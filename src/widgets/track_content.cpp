@@ -1,6 +1,28 @@
 #include "track_content.h"
 
+void track_content::display_visible()
+{
+    for(auto & it : _lines)
+    {
+        if(it == nullptr) continue;
+        it->set_num_cols((fully_visible) ? num_cols : 4);
+    }
+    resize_conditions.update_width = true;
+    update();
+}
 
+void track_content::update_labels()
+{
+    for(auto & it : _lines)
+        if(it.get() != nullptr)
+            it->update_label();
+}
+
+void track_content::update_lines()
+{
+    resize(jtracker::data.number_of_lines);
+    _lines.resize(jtracker::data.number_of_lines);
+}
 void track_content::show_fully(bool b)
 {
     fully_visible = b;
@@ -11,13 +33,6 @@ void track_content::toggle_show()
 {
     fully_visible = !fully_visible;
     display_visible();
-}
-
-void track_content::set_num_lines(size_t num_lines)
-{
-    if(num_lines == _lines.size()) return;
-    resize(num_lines);
-    _lines.resize(num_lines);
 }
 
 void track_content::set_num_cols(size_t cols)
@@ -359,15 +374,4 @@ std::shared_ptr<track_cell>& track_content::get_main_cell()
 {
     return _lines[selection.main_selected_line()]->
             cells[selection.main_selected_column()];
-}
-
-void track_content::display_visible()
-{
-    for(auto & it : _lines)
-    {
-        if(it == nullptr) continue;
-        it->set_num_cols((fully_visible) ? num_cols : 4);
-    }
-    resize_conditions.update_width = true;
-    update();
 }

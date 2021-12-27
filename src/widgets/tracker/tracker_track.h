@@ -48,12 +48,11 @@ public:
                     ), vspacer(5));
     }
 
-    tracker_track(size_t track_index = 0, size_t num_line = 8, size_t num_cols = 4) :
+    tracker_track(size_t track_index = 0) :
     array_composite<2, vtile_element>(vtile(make_buttons_tile(track_index), link(t_content) ) )
 
     {
-        t_content.set_num_cols(num_cols);
-        t_content.set_num_lines(num_line);
+        t_content.update_lines();
     }
 
     bool click(context const& ctx, mouse_button btn)

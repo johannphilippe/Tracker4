@@ -12,6 +12,8 @@ struct sniper_track_event
     bool selected = false;
 };
 
+extern sniper_track_event sniper_null_event;
+
 struct sniper_track_drag_resize
 {
     enum class mode

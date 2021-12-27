@@ -9,6 +9,9 @@
 #include<models/track_event.h>
 #include<utilities/paint_utilities.h>
 #include<utilities/string_utilities.h>
+#include<utilities/maths_utilities.h>
+#include<tracker/jtracker_globals.h>
+
 using namespace cycfi::elements;
 
 class sniper_track_content : public tracker<>
@@ -16,8 +19,8 @@ class sniper_track_content : public tracker<>
 public:
     constexpr static const float bounds_distance_selection = 5.0f;
 
-    sniper_track_content(size_t nlines = 16) :
-        tracker<>(), num_lines(nlines)
+    sniper_track_content() :
+        tracker<>()
     {}
 
     view_limits limits(basic_context const& ctx) const override;
@@ -28,13 +31,13 @@ public:
     void drag(const context &ctx, mouse_button btn) override;
     bool scroll(context const& ctx, point dir, point p) override;
 
-    void set_num_lines(size_t lines);
 
+    void update_lines();
     void clear();
 
-    size_t num_lines;
-
     std::vector<sniper_track_event> events;
+
+    std::function<void(bool, sniper_track_event&)> on_event;
 protected:
 
     constexpr static const float line_offset = 20;

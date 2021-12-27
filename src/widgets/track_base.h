@@ -11,6 +11,7 @@ public:
     track_base() : type(T)
     {}
     track_type type;
+
 };
 
 #endif // TRACK_BASE_H

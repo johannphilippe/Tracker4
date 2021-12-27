@@ -13,6 +13,7 @@
 #include<tracker/jtracker.h>
 #include<controllers/cell_selection_controller.h>
 #include<widgets/dynamic_size_cell_composer.h>
+#include<tracker/jtracker_globals.h>
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
@@ -30,7 +31,9 @@ public:
         line_index(l_idx),
         event_type(ev_type)
     {
-        push_back(share(fixed_size_label<4>(std::to_string(l_idx))));
+        update_label(true);
+        //push_back(make_fixed_size_label_with_background<4>(std::to_string(l_idx), ));
+        //push_back(share(fixed_size_label<4>(std::to_string(l_idx))));
         set_num_cols(num);
     }
 
@@ -75,6 +78,18 @@ public:
         return htile_composite::limits(ctx);
     }
 
+    void update_label(bool create = false)
+    {
+        color c = (jtracker::data.grid_step > 0 && ((line_index % jtracker::data.grid_step) == 0) ) ?
+                    jtracker::theme.track_label_index_hot_color :
+                    jtracker::theme.track_label_index_color;
+        auto lab = make_fixed_size_label_with_background<4>(std::to_string(line_index), c );
+        if(create)
+            push_back(lab);
+        else
+            data()[0] = lab;
+    }
+
     std::function<void(context const&ctx, mouse_button btn, size_t, size_t col_index)> *click_cbk = nullptr;
     std::function<void(key_info k)> on_key = [](key_info){};
 
@@ -116,7 +131,7 @@ public:
     }
 
     // track content constructor
-    track_content(size_t num_lines = 64, size_t num_cols = 4) :
+    track_content(size_t num_lines = jtracker::data.number_of_lines, size_t num_cols = jtracker::data.default_column_number) :
         vdynamic_list(
             make_resizable_composer(num_lines, [this](size_t i) { return make_line(i);}, &resize_conditions)
             ),
@@ -124,9 +139,6 @@ public:
         _lines(num_lines, nullptr)
     {
     }
-
-    void set_num_lines(size_t num_lines);
-    void set_num_cols(size_t cols);
 
     // display only 4 cells or full track
     void toggle_show();
@@ -154,15 +166,19 @@ public:
     cell_selector selection;
     //cell_animator animator;
 
+    void set_num_cols(size_t cols);
     size_t num_cols;
 
+    void update_lines();
+    void update_labels();
+
     std::vector<std::shared_ptr<track_line>> _lines;
+
 
     std::function<void(context const& ctx, mouse_button btn, size_t l, size_t c)> cell_click_callback =
             [&](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);};
     std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
             [](size_t, size_t, std::string_view){};
-
 
     resize_condition resize_conditions;
 protected:

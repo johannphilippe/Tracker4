@@ -29,6 +29,8 @@ struct tracker_theme
         t.spin_text_color 		 			= 	colors::antique_white;
 
         t.track_background_color			= 	rgba(28, 30, 34, 255);
+        t.track_label_index_color			=	colors::grey[20].opacity(0.5);
+        t.track_label_index_hot_color		=	colors::grey[50].opacity(0.5);
         t.sniper_track_background_color		= 	rgb(15, 15, 40);
         t.sniper_track_lines_color			= 	colors::wheat;
 
@@ -37,6 +39,7 @@ struct tracker_theme
         ***********************/
         t.cell_box_font						=	font_descr{ "Open Sans", 14.0 };
         t.sniper_track_font					=	font_descr{ "Roboto Light", 12.0 };
+        t.main_spin_font					=	font_descr{ "Roboto Light", 14.0};
 
         return t;
     }
@@ -89,6 +92,8 @@ struct tracker_theme
     color spin_text_color;
 
     // Tracks
+    color track_label_index_color;
+    color track_label_index_hot_color;
     color track_background_color;
     color sniper_track_background_color;
     color sniper_track_lines_color;
@@ -99,6 +104,7 @@ struct tracker_theme
 
     font_descr cell_box_font;
     font_descr sniper_track_font;
+    font_descr main_spin_font;
 };
 
 // Probably needs to be mutable (not const or constexpr)

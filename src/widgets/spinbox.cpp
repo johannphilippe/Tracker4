@@ -51,39 +51,60 @@ void spinbox<T>::draw(context const& ctx)
     ctx.canvas.stroke();
 }
 
+template <typename T>
+void spinbox<T>::long_click(context const& ctx, mouse_button btn, int long_press)
+{
+    if(!clicked)
+        return;
+
+    click_event(ctx, btn);
+    if(long_press > 50) long_press -= 25;
+    ctx.view.post(std::chrono::milliseconds( long_press), [=](){
+        long_click(ctx, btn, long_press);
+    });
+}
+
 template<typename T>
 bool spinbox<T>::click(context const& ctx, mouse_button btn)
 {
 
     if(btn.down){
-        clicked = true;
-        switch (focused) {
-        case 1:
-        {
-            decrement();
-            ctx.view.refresh(*this);
-            on_change(controller.value);
-            break;
-        }
-        case 2:
-        {
-            increment();
-            ctx.view.refresh(*this);
-            on_change(controller.value);
-            break;
-        }
-        default:
-        {
-            click_pos = btn.pos;
-            break;
-        }
-        }
+        if(ctx.bounds.includes(btn.pos)) clicked = true;
+
+        ctx.view.post(std::chrono::milliseconds(300), [=]() {long_click(ctx, btn, 200);});
+        click_event(ctx, btn);
     } else // btn up
     {
         clicked = false;
         ctx.view.refresh(*this);
     }
     return true;
+}
+
+template<typename T>
+void spinbox<T>::click_event(context const& ctx, mouse_button &btn)
+{
+    switch (focused) {
+    case 1:
+    {
+        decrement();
+        ctx.view.refresh(*this);
+        on_change(controller.value);
+        break;
+    }
+    case 2:
+    {
+        increment();
+        ctx.view.refresh(*this);
+        on_change(controller.value);
+        break;
+    }
+    default:
+    {
+        click_pos = btn.pos;
+        break;
+    }
+    }
 }
 
 template<typename T>

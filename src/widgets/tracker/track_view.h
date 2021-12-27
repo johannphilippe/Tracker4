@@ -24,6 +24,13 @@ public:
     {}
 };
 
+class grid_step_spin : public spinbox<int>
+{
+public:
+    grid_step_spin() : spinbox<int>(spin_controller<int>(0, std::numeric_limits<int>::max(), 0, 1))
+    {}
+};
+
 
 class track_view_bar : public array_composite<2, layer_element>
 {
@@ -31,16 +38,20 @@ public:
     track_view_bar() :
         array_composite<2, layer_element>(pane("Track controls",
                                                htile(
-                                                   vtile(expandable_label("Sequence"),
-                                                         link(seq_nbr)),
+                                                   simple_heading(link(seq_nbr), "Sequence" ),
                                                    hspacer(5),
-                                                   vtile(expandable_label("Tracks"),
-                                                         link(track_nbr)),
+                                                   simple_heading(link(track_nbr), "Tracks"),
                                                    hspacer(5),
-                                                   vtile(expandable_label("Lines"),
-                                                         link(line_nbr) )))) {}
+                                                   simple_heading(link(line_nbr),"Lines"),
+                                                   hspacer(5),
+                                                   simple_heading(link(grid_step),"Grid")
+                                                   )
+                                               )
+                                          )
+    {}
 
     track_bar_spin track_nbr, seq_nbr, line_nbr;
+    grid_step_spin grid_step;
 };
 
 class main_cell_editor : public basic_input_box
@@ -98,23 +109,33 @@ public:
         }
     }
 
-    void set_num_lines(size_t lines)
+    void update_lines()
     {
         for(auto & it : tracks)
         {
             if(std::holds_alternative<tracker_track_ptr>(it))
             {
                 tracker_track_ptr t_ptr(std::get<tracker_track_ptr>(it));
-                if(t_ptr->t_content._lines.size() != lines)
-                    t_ptr->t_content.set_num_lines(lines);
+                t_ptr->t_content.update_lines();
             }
             else if(std::holds_alternative<sniper_track_ptr>(it))
             {
                 sniper_track_ptr t_ptr(std::get<sniper_track_ptr>(it));
-                if(t_ptr->sn_content.num_lines != lines)
-                    t_ptr->sn_content.set_num_lines(lines);
+                t_ptr->sn_box.update_lines();
             }
         }
+    }
+
+    void update_labels(bool both = true)
+    {
+        for(auto & it : tracks)
+        {
+            if( both && std::holds_alternative<tracker_track_ptr>(it))
+                std::get<tracker_track_ptr>(it)->t_content.update_labels();
+            else if(std::holds_alternative<sniper_track_ptr>(it))
+                std::get<sniper_track_ptr>(it)->sn_box.update_labels();
+        }
+
     }
 
     void add_track(track_type t = track_type::tracker_track)
@@ -122,7 +143,7 @@ public:
         switch (t) {
         case track_type::tracker_track:
         {
-            tracker_track_ptr t_ptr(new tracker_track(tracks.size(),64, 8));
+            tracker_track_ptr t_ptr(new tracker_track(tracks.size()));
             std::variant<tracker_track_ptr, sniper_track_ptr > v;
             v = t_ptr;
             tracks.push_back(v);
@@ -203,23 +224,31 @@ public:
         bar.track_nbr.on_change = [&](size_t v)
         {
             t_set.set_num_tracks(v);
-            t_set.set_num_lines(bar.line_nbr.get_value());
+            t_set.update_lines();
             jtracker::tracker_app::get_instance()->_view.refresh(*this);
         };
         bar.track_nbr.set_value(2);
         t_set.set_num_tracks(bar.track_nbr.get_value());
 
         bar.line_nbr.set_value(16);
-        t_set.set_num_lines(bar.line_nbr.get_value());
 
+        // Design note : should probably set always the global data, then refresh what needs to be
+        // better than calling setters all the time
         bar.line_nbr.on_change = [&](size_t l)
         {
-          t_set.set_num_lines(l);
+          jtracker::data.number_of_lines = l;
+          t_set.update_lines();
+          t_set.update_labels(false);
           view &v = jtracker::tracker_app::get_instance()->_view;
-          //jtracker::tracker_app::get_instance()->_view.post([&](){
           v.layout();
           v.refresh();
-          //});
+        };
+
+        bar.grid_step.on_change = [&](size_t change)
+        {
+          jtracker::data.grid_step = change;
+          t_set.update_labels();
+          jtracker::tracker_app::get_instance()->_view.refresh(*this);
         };
     }
 
