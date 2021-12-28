@@ -25,8 +25,8 @@ public:
     view _view;
 
     // Animation utilities
-    cell_animator _cell_animation;
-    static cell_animator& get_cell_animation();
+    color_animator _color_animator;
+    static color_animator& get_color_animator();
 
     void refresh()
     {

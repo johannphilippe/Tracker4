@@ -51,20 +51,21 @@ void sniper_track_content::draw(const context &ctx)
         bnds.right = ctx.bounds.right;
         //if(bnds.top < ctx.bounds.top || bnds.bottom > ctx.bounds.bottom) continue;
 
+        /*
         const color event_color = get_event_color(events[i].type).opacity(
                     (events[i].selected ? 1 : 0.5) - (static_cast<int>(i) == _focused_event ? 0.0 : 0.2)
                     );
+        */
+        const color event_color = events[i].current_color->opacity(events[i].current_color->alpha - (_focused_event == static_cast<int>(i) ? 0.0 : 0.2));
 
         // Event rect
         ctx.canvas.fill_color(event_color);
         bnds.left += line_offset;
         bnds.right -= line_offset;
         // if overf
-        std::cout << "bnds bot " << bnds.bottom << " " << ctx.bounds.bottom << " " << track_bounds.bottom << std::endl;
         if(bnds.bottom > ctx.bounds.bottom)
         {
             bnds.bottom = ctx.bounds.bottom;
-            std::cout << "overflow " << std::endl;
         }
 
         ctx.canvas.fill_round_rect(bnds, 6);
@@ -137,11 +138,15 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
       {
           if(ix == sel ) {
               events[ix].selected = true; //events[ix].selected;
+              events[ix].current_color->set_color_target(events[ix].current_color->opacity(1.0));
           } else if(!was_selected)
           {      
               events[ix].selected = false;
+              events[ix].current_color->set_color_target(events[ix].current_color->opacity(0.5));
           }
+          jtracker::tracker_app::get_color_animator().push_back(events[ix].current_color);
       }
+      jtracker::tracker_app::get_color_animator().animate(jtracker::tracker_app::get_instance()->_view);
     };
 
     if(btn.down )
@@ -156,10 +161,14 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
             if(btn.modifiers & mod_control)
             {
                 events[i].selected = !events[i].selected;
+                events[i].current_color->set_color_target(
+                            events[i].current_color->opacity( events[i].selected ? 1.0 : 0.5));
+
+                jtracker::tracker_app::get_color_animator().push_back(events[i].current_color);
+                jtracker::tracker_app::get_color_animator().animate(jtracker::tracker_app::get_instance()->_view);
             }
             else // no modifiers
             {
-                std::cout << "was selected " << events[i].selected << std::endl;
                 select_one(i);
                 on_event(true, events[i]);
             }
@@ -174,11 +183,14 @@ bool sniper_track_content::click(const context &ctx, mouse_button btn)
         if (btn.pos.y <  (ctx.bounds.height() + ctx.bounds.top - (line_h / 2) ) )
         {
 
+            track_event_type type = static_cast<track_event_type>( (rand() % 5) + 1);
             sniper_track_event event{rect(ctx.bounds.left,  btn.pos.y - (line_h / 2) - ctx.bounds.top,
                                           ctx.bounds.right, btn.pos.y + (line_h / 2) - ctx.bounds.top),
-                        static_cast<track_event_type>(rand() % 6), true};
-            for(auto & it : events) it.selected = false;
+                        type, true, std::make_shared<interpolated_color>(get_event_color(type).opacity(1))
+                                    };
+            unselect_events();
             events.push_back(event);
+
             _focused_event = events.size() -1;
             on_event(true, events.back());
             ctx.view.refresh(*this);
@@ -199,10 +211,10 @@ bool sniper_track_content::cursor(const context &ctx, point p, cursor_tracking s
     auto find_up_low_bounds = [&](size_t ix) -> sniper_track_drag_resize::mode
     {
         const float top_y = events[ix].bounds.top + ctx.bounds.top;
-        if(std::abs(top_y - p.y) < bounds_distance_selection)
+        if( std::abs(p.y - top_y) < bounds_distance_selection)
             return sniper_track_drag_resize::mode::top;
         const float bottom_y = events[ix].bounds.bottom + ctx.bounds.top;
-        if(std::abs(bottom_y - p.y) < bounds_distance_selection)
+        if( std::abs(bottom_y - p.y) < bounds_distance_selection)
             return sniper_track_drag_resize::mode::bottom;
         return sniper_track_drag_resize::mode::none;
     };
@@ -225,8 +237,8 @@ bool sniper_track_content::cursor(const context &ctx, point p, cursor_tracking s
 
         // select focused event
         rect bnds = events[i].bounds;
-        bnds.top += ctx.bounds.top;
-        bnds.bottom += ctx.bounds.top;
+        bnds.top += ctx.bounds.top - bounds_distance_selection;
+        bnds.bottom += ctx.bounds.top + bounds_distance_selection;
         if(bnds.includes(p))
         {
             _focused_event = i;
@@ -310,7 +322,6 @@ void sniper_track_content::drag(const context &ctx, mouse_button btn)
     }
 }
 
-
 bool sniper_track_content::scroll(context const& ctx, point dir, point)
 {
     std::cout << "scroll event passed to canvas " << std::endl;
@@ -335,4 +346,15 @@ view_limits sniper_track_content::limits(const basic_context &) const
     // get the font to make the line height equivalent to tracker track
     const float line_h = line_height() * jtracker::data.number_of_lines;
     return {{250, line_h}, {300, line_h}};
+}
+
+void sniper_track_content::unselect_events()
+{
+    for(auto & it : events)
+    {
+        it.selected = false;
+        it.current_color->set_color_target(it.current_color->opacity(0.5));
+        jtracker::tracker_app::get_color_animator().push_back(it.current_color);
+    }
+    jtracker::tracker_app::get_color_animator().animate(jtracker::get_app()->_view);
 }

@@ -114,15 +114,17 @@ bool track_content::key(context const& ctx, key_info k)
         {
             if(it.column_index < _lines[it.line_index]->cells.size()) {
                 get_cell_at(it.line_index, it.column_index)->background.unselect();
-                tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+                tracker_app::get_color_animator().push_back(get_cell_at(it.line_index, it.column_index)->background.current_color);
             }
         }
 
         selection.clear();
         selection.select_main(new_sel);
         get_cell_at(selection.main_selected_line(), selection.main_selected_column())->background.select();
-        tracker_app::get_cell_animation().push_back(get_cell_at(selection.main_selected_line(), selection.main_selected_column()));
-        tracker_app::get_cell_animation().animate(v);
+        tracker_app::get_color_animator().push_back(
+                    get_cell_at(selection.main_selected_line(), selection.main_selected_column())->background.current_color
+                    );
+        tracker_app::get_color_animator().animate(v);
 
         do_focus();
     };
@@ -242,14 +244,14 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             {
                 if(it.column_index < _lines[it.line_index]->cells.size()) {
                     get_cell_at(it.line_index, it.column_index)->background.unselect();
-                    tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+                    tracker_app::get_color_animator().push_back(get_cell_at(it.line_index, it.column_index)->background.current_color);
                 }
             }
             selection.selected.clear();
             selection.select_main(line, col);
             get_cell_at(line, col)->background.select();
-            tracker_app::get_cell_animation().push_back(get_cell_at(line, col));
-            tracker_app::get_cell_animation().animate(v);
+            tracker_app::get_color_animator().push_back(get_cell_at(line, col)->background.current_color);
+            tracker_app::get_color_animator().animate(v);
         };
 
         // find path of cells to the current one
@@ -259,7 +261,7 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             for(auto & it : selection.selected)
             {
                 get_cell_at(it.line_index, it.column_index)->background.unselect();
-                tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+                tracker_app::get_color_animator().push_back(get_cell_at(it.line_index, it.column_index)->background.current_color);
             }
 
             selection.clear();
@@ -280,9 +282,9 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             for(auto & it : selection.selected)
             {
                 get_cell_at(it.line_index, it.column_index)->background.select();
-                tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+                tracker_app::get_color_animator().push_back(get_cell_at(it.line_index, it.column_index)->background.current_color);
             }
-            tracker_app::get_cell_animation().animate(v);
+            tracker_app::get_color_animator().animate(v);
         };
 
         auto alt_selection = [&]()
@@ -294,16 +296,16 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
              {
                  selection.selected.push_back(cell_selection(line, c));
                  get_cell_at(line, c)->background.select();
-                 tracker_app::get_cell_animation().push_back(get_cell_at(line, c));
+                 tracker_app::get_color_animator().push_back(get_cell_at(line, c)->background.current_color);
              } else if(sel != - 1)  // != - 1
              {
                  get_cell_at(line, c)->background.unselect();
-                 tracker_app::get_cell_animation().push_back(get_cell_at(line, c));
+                 tracker_app::get_color_animator().push_back(get_cell_at(line, c)->background.current_color);
                  selection.remove_at(sel);
              }
           }
 
-          tracker_app::get_cell_animation().animate(v);
+          tracker_app::get_color_animator().animate(v);
 
           selection.select_main(line, col);
         };
@@ -321,8 +323,8 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
                 //lines[selection.selected[sel].line_index]->
                 //        cells[selection.selected[sel].column_index]->background.unselect();
                 get_cell_at(c_sel.line_index, c_sel.column_index)->background.unselect();
-                tracker_app::get_cell_animation().push_back(get_cell_at(c_sel.line_index, c_sel.column_index));
-                tracker_app::get_cell_animation().animate(v);
+                tracker_app::get_color_animator().push_back(get_cell_at(c_sel.line_index, c_sel.column_index)->background.current_color);
+                tracker_app::get_color_animator().animate(v);
                 selection.remove_at(sel);
             }
             else
@@ -330,8 +332,10 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
             // Main selected should be the last one
                 selection.select_main(line, col);
                 get_cell_at(selection.selected.back().line_index, selection.selected.back().column_index)->background.select();
-                tracker_app::get_cell_animation().push_back(get_cell_at(selection.selected.back().line_index, selection.selected.back().column_index));
-                tracker_app::get_cell_animation().animate(v);
+                tracker_app::get_color_animator().push_back(
+                            get_cell_at(selection.selected.back().line_index, selection.selected.back().column_index)->background.current_color
+                            );
+                tracker_app::get_color_animator().animate(v);
             }
 
         } else if(btn.modifiers & mod_shift)
@@ -358,10 +362,10 @@ void track_content::unselect()
    }
    for(auto & it : selection.selected) {
        get_cell_at(it.line_index, it.column_index)->background.unselect();
-       tracker_app::get_cell_animation().push_back(get_cell_at(it.line_index, it.column_index));
+       tracker_app::get_color_animator().push_back(get_cell_at(it.line_index, it.column_index)->background.current_color);
    }
 
-   tracker_app::get_cell_animation().animate(v);
+   tracker_app::get_color_animator().animate(v);
    selection.clear();
 }
 

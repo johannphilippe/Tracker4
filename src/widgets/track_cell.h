@@ -10,6 +10,7 @@
 
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
+using namespace jtracker::color_utilities;
 
 class cell_text_box : public basic_input_box
 {
@@ -33,13 +34,13 @@ public:
         is_active(false),
         inactive(inactive_color),
         active(inactive_color.opacity(1)),
-        current_color(inactive)
+        current_color(std::make_shared<interpolated_color>(inactive) )
     {
     }
 
     void draw(context const& ctx) override
     {
-        ctx.canvas.fill_color(current_color);
+        ctx.canvas.fill_color(*current_color);
         ctx.canvas.fill_round_rect(ctx.bounds, 4);
         ctx.canvas.fill();
         ctx.canvas.line_width(0.5);
@@ -64,13 +65,12 @@ public:
 
     void set_color(color c)
     {
-        current_color.set_color_target(c, frame_steps);
-        //animate(v);
+        current_color->set_color_target(c, frame_steps);
     }
 
     void set_color_no_redraw(color c)
     {
-        current_color.set_color_target(c, frame_steps);
+        current_color->set_color_target(c, frame_steps);
     }
 
 
@@ -82,13 +82,13 @@ public:
         active = inactive.opacity(1);
         if(inactive == get_theme().panel_color)
             active = colors::goldenrod.opacity(0.5);
-        current_color = inactive;
+        *current_color = inactive;
     }
 
     float _width;
     bool is_active;
     color inactive, active;
-    jtracker::color_utilities::interpolated_color current_color;
+    std::shared_ptr<interpolated_color> current_color;
 };
 
 

@@ -2,9 +2,10 @@
 #define SNIPER_TRACK_CONTENT_H
 
 #include<elements.hpp>
-#include<tracker/jtracker_theme.h>
 #include<iostream>
 #include<vector>
+#include<tracker/jtracker.h>
+#include<tracker/jtracker_theme.h>
 #include<models/sniper_track_event.h>
 #include<models/track_event.h>
 #include<utilities/paint_utilities.h>
@@ -40,6 +41,7 @@ public:
     std::function<void(bool, sniper_track_event&)> on_event;
 protected:
 
+    void unselect_events();
     constexpr static const float line_offset = 20;
     float line_height() const;
     int _focused_event = -1;

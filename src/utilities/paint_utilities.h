@@ -37,7 +37,7 @@ public:
         diff();
     }
 
-    void set_color_target(color c, size_t steps_)
+    void set_color_target(color c, size_t steps_ = 30)
     {
         to = c;
         count = 0;
@@ -51,7 +51,6 @@ public:
                     to.red - red, to.green - green,
                     to.blue - blue, to.alpha - alpha
                     );
-
     }
 
     bool interpolate()

@@ -22,9 +22,9 @@ tracker_app::tracker_app(int argc, char *argv[]) :
 
 }
 
-cell_animator& tracker_app::get_cell_animation()
+color_animator& tracker_app::get_color_animator()
 {
-    return get_instance()->_cell_animation;
+    return get_instance()->_color_animator;
 }
 
 tracker_app* tracker_app::app_ = nullptr;

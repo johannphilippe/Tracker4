@@ -3,13 +3,16 @@
 
 #include<models/track_event.h>
 #include<elements.hpp>
+#include<utilities/paint_utilities.h>
 using namespace cycfi::elements;
+using namespace jtracker::color_utilities;
 
 struct sniper_track_event
 {
     rect bounds;
     track_event_type type;
     bool selected = false;
+    std::shared_ptr<interpolated_color> current_color;
 };
 
 extern sniper_track_event sniper_null_event;
