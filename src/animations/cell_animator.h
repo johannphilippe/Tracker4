@@ -10,7 +10,8 @@
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
 
-class cell_animator : public std::vector<std::shared_ptr<track_cell>>
+class cell_animator :
+        public std::vector<std::shared_ptr<track_cell>>
 {
 public:
     cell_animator()

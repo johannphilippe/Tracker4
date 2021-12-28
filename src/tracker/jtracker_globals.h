@@ -14,7 +14,7 @@ struct tracker_data
     size_t number_of_lines = 8;
     size_t grid_step = 0;
 
-    float track_line_height = 0;
+    float track_line_height = get_track_line_height();
 
     constexpr static const size_t default_column_number = 8;
 };

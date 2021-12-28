@@ -14,7 +14,7 @@ tracker_app *tracker_app::get_instance(int argc, char *argv[])
 
 tracker_app::tracker_app(int argc, char *argv[]) :
     app(argc, argv, "Curve Editor", "com.johannphilippe.curve_editor"),
-    _win(name(), window::style::closable, rect(0,0,1920,1080)), _view(_win)
+    _win(name(), window::style::standard, rect(0,0,1920,1080)), _view(_win)
 {
     _win.on_close = [this](){
         this->stop();
