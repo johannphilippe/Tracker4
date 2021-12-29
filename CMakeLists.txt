@@ -30,8 +30,12 @@ set(ELEMENTS_APP_ID "com.johannphilippe.tracker")
 set(ELEMENTS_APP_VERSION "1.0")
 
 set(ELEMENTS_APP_SOURCES 
-      #Animations
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/animations/cell_animator.h
+      # Audio
+      #${CMAKE_CURRENT_SOURCE_DIR}/src/audio/csound_singleton.h
+      #${CMAKE_CURRENT_SOURCE_DIR}/src/audio/csound_singleton.cpp
+
+      # Animations
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/animations/generic_animation.h
 
       # Controllers
       ${CMAKE_CURRENT_SOURCE_DIR}/src/controllers/cell_selection_controller.h
@@ -57,9 +61,6 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_cell.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/dynamic_size_cell_composer.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_box.h
-      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list.h
-      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_dynamic_list_impl.h
-      #${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/active_cell_composer.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.cpp
 

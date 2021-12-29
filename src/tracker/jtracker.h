@@ -3,8 +3,8 @@
 
 #include<elements.hpp>
 #include<iostream>
-#include<animations/cell_animator.h>
 #include<tracker/jtracker_theme.h>
+#include<animations/generic_animation.h>
 
 using namespace cycfi::elements;
 
@@ -25,8 +25,10 @@ public:
     view _view;
 
     // Animation utilities
-    color_animator _color_animator;
-    static color_animator& get_color_animator();
+    //color_animator _color_animator;
+    //static color_animator& get_color_animator();
+    animator_pool _animator_pool;
+    static animator_pool& get_animator_pool();
 
     void refresh()
     {

@@ -12,7 +12,7 @@ struct sniper_track_event
     rect bounds;
     track_event_type type;
     bool selected = false;
-    std::shared_ptr<interpolated_color> current_color;
+    std::shared_ptr<color_animation> current_color;
 };
 
 extern sniper_track_event sniper_null_event;

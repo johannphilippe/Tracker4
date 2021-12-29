@@ -13,7 +13,7 @@ tracker_app *tracker_app::get_instance(int argc, char *argv[])
 }
 
 tracker_app::tracker_app(int argc, char *argv[]) :
-    app(argc, argv, "Curve Editor", "com.johannphilippe.curve_editor"),
+    app(argc, argv, "DTracker", "com.johannphilippe.dtracker"),
     _win(name(), window::style::standard, rect(0,0,1920,1080)), _view(_win)
 {
     _win.on_close = [this](){
@@ -22,9 +22,9 @@ tracker_app::tracker_app(int argc, char *argv[]) :
 
 }
 
-color_animator& tracker_app::get_color_animator()
+animator_pool& tracker_app::get_animator_pool()
 {
-    return get_instance()->_color_animator;
+    return get_instance()->_animator_pool;
 }
 
 tracker_app* tracker_app::app_ = nullptr;

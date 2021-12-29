@@ -15,26 +15,22 @@ using namespace jtracker::color_utilities;
 class cell_text_box : public basic_input_box
 {
 public:
-    cell_text_box() : basic_input_box("" ,
-                                      jtracker::theme.cell_box_font )
-    {
-    }
-private:
+    cell_text_box()
+        : basic_input_box("" , jtracker::theme.cell_box_font ) {}
 };
 
 class cell_background : public tracker<>
 {
 public:
-    constexpr static const size_t frame_steps = 15;
 
-    cell_background(std::string text_ = "", float width = 40,
+    cell_background(float width = 40,
                     color inactive_color = get_theme().panel_color) :
         tracker<>(),
         _width(width),
         is_active(false),
         inactive(inactive_color),
         active(inactive_color.opacity(1)),
-        current_color(std::make_shared<interpolated_color>(inactive) )
+        current_color(std::make_shared<color_animation>(inactive) )
     {
     }
 
@@ -65,12 +61,12 @@ public:
 
     void set_color(color c)
     {
-        current_color->set_color_target(c, frame_steps);
+        current_color->set_color_target(c);
     }
 
     void set_color_no_redraw(color c)
     {
-        current_color->set_color_target(c, frame_steps);
+        current_color->set_color_target(c);
     }
 
 
@@ -88,7 +84,7 @@ public:
     float _width;
     bool is_active;
     color inactive, active;
-    std::shared_ptr<interpolated_color> current_color;
+    std::shared_ptr<color_animation> current_color;
 };
 
 

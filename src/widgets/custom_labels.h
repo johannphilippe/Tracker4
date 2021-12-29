@@ -73,30 +73,4 @@ using expandable_label = label_gen<basic_expandable>;
 using basic_expandable_with_font = label_with_font<expandable_label_base>;
 using expandable_label_with_font = label_gen<basic_expandable_with_font>;
 
-/*
-// Idem with default font
-class custom_font_label : public default_label
-{
-public:
-    custom_font_label(font_descr font_d) : default_label(), descr(font_d), font(font_d)
-    {
-    }
-      virtual font_type       get_font() const
-    {
-        return descr;
-    }
-      virtual float           get_font_size() const
-    {
-        return descr._size;
-    }
-      virtual float           get_default_font_size() const
-    {
-        return get_font_size();
-    }
-private:
-    font_descr descr;
-    font font;
-};
-*/
-
 #endif // CUSTOM_LABELS_H

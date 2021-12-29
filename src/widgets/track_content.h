@@ -9,7 +9,6 @@
 #include<widgets/custom_labels.h>
 #include<widgets/track_cell.h>
 #include<models/track_event.h>
-#include<animations/cell_animator.h>
 #include<tracker/jtracker.h>
 #include<controllers/cell_selection_controller.h>
 #include<widgets/dynamic_size_cell_composer.h>
@@ -32,63 +31,18 @@ public:
         event_type(ev_type)
     {
         update_label(true);
-        //push_back(make_fixed_size_label_with_background<4>(std::to_string(l_idx), ));
-        //push_back(share(fixed_size_label<4>(std::to_string(l_idx))));
         set_num_cols(num);
     }
 
     track_line(size_t num, size_t l_idx) :
         htile_composite(), line_index(l_idx)
     {
+        update_label(true);
         set_num_cols(num);
     }
 
-
-    void set_num_cols(size_t num_cols)
-    {
-        if(num_cols == cells.size()) return;
-        if(num_cols > cells.size())
-        {
-            for(size_t i = cells.size(); i < num_cols; i++)
-            {
-                cells.push_back(
-                            // The 40 is for P2 in Csound. It should be smaller (30, or 25) but needs to wait for the size bug to be fixed in elements.
-                            std::make_shared<track_cell>((i==1) ? 40 : 60, get_event_color(event_type))
-                            );
-                cells.back()->on_click = [&, i](context const& ctx, mouse_button btn)
-                {
-                    if(click_cbk != nullptr)
-                        (*click_cbk)(ctx, btn, line_index, i);
-                };
-                this->push_back(cells.back());
-            }
-        }
-        else if(num_cols < cells.size() && num_cols >= 4)
-        {
-            while(num_cols < cells.size())
-            {
-                cells.pop_back();
-                pop_back();
-            }
-        }
-    }
-
-    view_limits limits(basic_context const& ctx) const  override
-    {
-        return htile_composite::limits(ctx);
-    }
-
-    void update_label(bool create = false)
-    {
-        color c = (jtracker::data.grid_step > 0 && ((line_index % jtracker::data.grid_step) == 0) ) ?
-                    jtracker::theme.track_label_index_hot_color :
-                    jtracker::theme.track_label_index_color;
-        auto lab = make_fixed_size_label_with_background<4>(std::to_string(line_index), c );
-        if(create)
-            push_back(lab);
-        else
-            data()[0] = lab;
-    }
+    void set_num_cols(size_t num_cols);
+    void update_label(bool create = false);
 
     std::function<void(context const&ctx, mouse_button btn, size_t, size_t col_index)> *click_cbk = nullptr;
     std::function<void(key_info k)> on_key = [](key_info){};
@@ -102,7 +56,6 @@ public:
 
     std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
             [](size_t, size_t, std::string_view) {};
-
 };
 
 

@@ -2,6 +2,8 @@
 #define PAINT_UTILITIES_H
 
 #include<elements.hpp>
+#include<tracker/jtracker_globals.h>
+#include<animations/generic_animation.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -17,67 +19,58 @@ inline color invert_color(color c)
 struct color_difference
 {
     color_difference() = default;
+    color_difference(color &a, color &b)
+        : r(b.red - a.red)
+        , g(b.green - a.green)
+        , b(b.blue - a.blue)
+        , a(b.alpha - a.alpha)
+    {}
     color_difference(float r_, float g_, float b_, float a_) :
         r(r_), g(g_), b(b_), a(a_)
     {}
     float r, g, b, a;
 };
 
-class interpolated_color : public color
+
+class color_animation : public animation_base, public color
 {
 public:
-    interpolated_color(color c) : color(c)
-    {}
-    interpolated_color(color from_, color to_, size_t steps_) :
-        color(from_),
-        count(0),
-        steps(steps_),
-        to(to_)
+    color_animation(color from, float dur_in_s = 0.5)
+        : animation_base(dur_in_s), color(from), _from(from)
     {
-        diff();
     }
 
-    void set_color_target(color c, size_t steps_ = 30)
+    void set_color_target(color t, float dur_in_s = 0.5)
     {
-        to = c;
-        count = 0;
-        diff();
-        steps = steps_;
+        _from = *this;
+        _target = t;
+        calculate_difference();
+        _set_duration(dur_in_s);
     }
 
-    void diff()
-    {
-        difference = color_difference(
-                    to.red - red, to.green - green,
-                    to.blue - blue, to.alpha - alpha
-                    );
+protected:
+
+    void _animate(float cnt) {
+        red = _from.red + (_diff.r * cnt );
+        green = _from.green + (_diff.g * cnt);
+        blue = _from.blue + (_diff.b * cnt );
+        alpha = _from.alpha + (_diff.a * cnt);
     }
 
-    bool interpolate()
+
+    void interpolate()
     {
-        if(count >= steps) return true;
-        this->red += (float(difference.r) / float(steps) );
-        this->green += (difference.g / steps);
-        this->blue += (difference.b / steps);
-        this->alpha += (difference.a / steps);
-        count++;
-        return false;
     }
 
-    bool compare()
+    void calculate_difference()
     {
-        if(this->red == to.red && this->green == to.green &&
-                this->blue == to.blue && this->alpha == to.alpha)
-            return true;
-        return false;
+        _diff = color_difference(*this, _target);
     }
 
-    size_t count, steps;
-    color to;
-    color_difference difference;
+    color _target;
+    color _from;
+    color_difference _diff;
 };
-
-
 
 
 }
