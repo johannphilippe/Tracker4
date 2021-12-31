@@ -1,7 +1,6 @@
 #ifndef TRACK_BASE_H
 #define TRACK_BASE_H
 
-
 enum class track_type {tracker_track, sniper_track};
 
 template<track_type T>

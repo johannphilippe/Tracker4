@@ -6,7 +6,11 @@
 #include<streambuf>
 #include<sstream>
 
+#include <utility>
+#include <array>
+#include <iostream>
 namespace jtracker { namespace string {
+
 
 // File to string utilities
 inline std::string read_file_as_string(std::string path)
@@ -43,6 +47,8 @@ static std::string get_string(T val, int precision = 5) {
         return ss.str();
 }
 
-}}
+}
+
+}
 
 #endif // STRING_UTILITIES_H

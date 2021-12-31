@@ -7,8 +7,8 @@
 #include<tracker/jtracker.h>
 #include<widgets/tracker/tab_view.h>
 #include<widgets/tracker/track_view.h>
-
 #include<widgets/tracker/curve_editor_view.h>
+#include<widgets/tracker/tracker_menus.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -41,11 +41,11 @@ int main(int argc, char* argv[])
                tab("Tracker"),
                tab("Curve editor"),
                tab("Code editor")
-
                );
 
     app->_view.content(
                vtile(
+                   make_tracker_menus(),
                    tabs
                    ),
                jtracker::background

@@ -4,7 +4,7 @@
 #  Distributed under the MIT License (https://opensource.org/licenses/MIT)
 ###############################################################################
 cmake_minimum_required(VERSION 3.9.6...3.15.0)
-project(EmptyStarter LANGUAGES C CXX)
+project(DTracker LANGUAGES C CXX)
 
 set(ELEMENTS_ROOT "/home/johann/Documents/Elements/elements")
 
@@ -23,11 +23,13 @@ if (NOT ELEMENTS_BUILD_EXAMPLES)
    add_subdirectory(${ELEMENTS_ROOT} elements)
 endif()
 
-set(ELEMENTS_APP_PROJECT "Tracker")
-set(ELEMENTS_APP_TITLE "Tracker")
+set(ELEMENTS_APP_PROJECT "DTracker")
+set(ELEMENTS_APP_TITLE "DTracker")
 set(ELEMENTS_APP_COPYRIGHT "Copyright (c) 2021 Johann Philippe")
 set(ELEMENTS_APP_ID "com.johannphilippe.tracker")
 set(ELEMENTS_APP_VERSION "1.0")
+
+add_compile_definitions(TRACKER_APP_NAME="DTracker")
 
 set(ELEMENTS_APP_SOURCES 
       # Audio
@@ -39,6 +41,10 @@ set(ELEMENTS_APP_SOURCES
 
       # Controllers
       ${CMAKE_CURRENT_SOURCE_DIR}/src/controllers/cell_selection_controller.h
+
+      #Dialogs
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/dialogs/options_dialog.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/dialogs/elements_dialog_base.h
 
       # Models
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve_point.h
@@ -62,9 +68,8 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/dynamic_size_cell_composer.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_box.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.cpp
 
-      # Tracker Views
+      # Tracker Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.h
@@ -73,8 +78,7 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/sniper_track.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/jtracker_global_widgets.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/jtracker_global_widgets.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_menus.h
 
       # Maths
       ${CMAKE_CURRENT_SOURCE_DIR}/src/maths/cubic_spline.h
@@ -84,13 +88,14 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/maths_utilities.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/paint_utilities.h
 
-
-      # Global
+      # Tracker
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_theme.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/filesystem.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/config_data.h
 
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
       )

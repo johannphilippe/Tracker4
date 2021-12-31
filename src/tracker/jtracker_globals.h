@@ -4,6 +4,8 @@
 #include<iostream>
 #include<tracker/jtracker_theme.h>
 #include<chrono>
+#include<tracker/filesystem.h>
+#include<tracker/config_data.h>
 using namespace std::chrono;
 using namespace std::chrono_literals;
 namespace jtracker {
@@ -33,6 +35,7 @@ private:
 
 struct tracker_data
 {
+    // Simple Data
     size_t seq_nbr = 1;
     size_t number_of_tracks = 1;
     size_t number_of_lines = 8;
@@ -42,7 +45,10 @@ struct tracker_data
 
     constexpr static const size_t default_column_number = 8;
 
+
     fps_value app_fps;
+    tracker_filesystem filesystem;
+    tracker_audio_config_data audio_config;
 };
 
 extern tracker_data data;

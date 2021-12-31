@@ -6,7 +6,6 @@
 #include<tracker/jtracker_theme.h>
 #include<widgets/custom_labels.h>
 #include<widgets/sniper_track_content.h>
-#include<widgets/tracker/jtracker_global_widgets.h>
 #include<iostream>
 #include<widgets/sniper_event_editor.h>
 using namespace cycfi::elements;

@@ -6,8 +6,6 @@
 #include<tracker/jtracker_globals.h>
 using namespace cycfi::elements;
 
-
-
 class sniper_event_editor : public array_composite<2, vtile_element>
 {
 public:

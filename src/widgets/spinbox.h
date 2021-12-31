@@ -30,7 +30,6 @@ public:
 
     constexpr static const float height_index = 1.55f;
 
-
     spinbox(spin_controller<T> control_) : tracker<>(), controller(control_),
         _text(std::to_string(controller.value)),
         on_change([&](T){}),
@@ -56,7 +55,7 @@ public:
         update_text();
     }
 
-    void increment()
+    virtual void increment()
     {
         controller.value =
                 jtracker::maths::limit_number<T>
@@ -64,7 +63,7 @@ public:
         update_text();
     }
 
-    void decrement()
+    virtual void decrement()
     {
         controller.value =
                 jtracker::maths::limit_number<T>
@@ -72,7 +71,7 @@ public:
         update_text();
     }
 
-    void set_value(T val)
+    virtual void set_value(T val)
     {
         controller.value =
                 jtracker::maths::limit_number<T>
@@ -85,12 +84,15 @@ public:
     spin_controller<T> controller;
     std::function<void(T)> on_change;
 
-private:
+protected:
+
     void update_text()
     {
         //on_change(controller.value);
         _text = jtracker::string::get_string<T>(controller.value);
     }
+
+private:
 
     void click_event(context const &ctx, mouse_button &btn);
 
@@ -104,6 +106,123 @@ private:
     bool labeled = false;
 };
 
+template <typename T>
+class spinbox_list_controller
+{
+public:
+    spinbox_list_controller(T value_, std::vector<T> values_)
+        : value(value_)
+        , values(values_)
+    {
+        // verify value is in values
+        bool is_found = false;
+        for(auto & it : values)
+        {
+            std::cout << "vector value : "  << it << std::endl;
+            if(value == it)
+            {
+                std::cout << "is found " << std::endl;
+                is_found = true;
+                break;
+            }
+        }
+        // if it is not, add it inside
+        if(!is_found)
+            values.push_back(value);
+        // then sort
+        std::sort(values.begin(), values.end());
+        // find index of val
+        for(size_t i = 0; i < values.size(); ++i)
+        {
+            if(value == values[i])
+            {
+                val_index = i;
+                break;
+            }
+        }
+    }
+
+    int find_value_position(T v)
+    {
+        for(size_t i = 0; i < values.size(); ++i)
+        {
+            if(v == values[i])
+                return i;
+        }
+        return -1;
+    }
+
+    int has_next()
+    {
+        if(val_index < values.size() - 1)
+        {
+            return (value = values[++val_index]);
+        }
+        return -1;
+    }
+
+    int has_previous()
+    {
+        if(val_index > 0)
+        {
+            return (value = values[--val_index]);
+        }
+        return -1;
+    }
+
+    T value;
+    std::vector<T> values;
+    size_t val_index;
+};
+
+template <typename T>
+struct spinbox_list : public spinbox<T>
+{
+    spinbox_list(spinbox_list_controller<T> control_)
+        : spinbox<T>()
+        , _list_controller(control_)
+    {
+        this->controller.value = _list_controller.value;
+        this->update_text();
+    }
+
+    void increment() override
+    {
+        if(_list_controller.has_next() != -1)
+        {
+            this->controller.value = _list_controller.value;
+            this->update_text();
+        }
+    }
+
+    void decrement() override
+    {
+        if(_list_controller.has_previous() != -1)
+        {
+            this->controller.value = _list_controller.value;
+            this->update_text();
+        }
+    }
+
+    void set_value(T v) override
+    {
+        int pos = _list_controller.find_value_position(v);
+        if(pos != -1)
+        {
+            _list_controller.val_index = pos;
+            _list_controller.value = v;
+            this->controller.value = _list_controller.value;
+            this->update_text();
+        }
+    }
+
+
+private:
+    spinbox_list_controller<T> _list_controller;
+
+};
+
+
 template<typename T, size_t Width>
 class fixed_width_spinbox : public spinbox<T>
 {
@@ -115,6 +234,7 @@ public:
         view_limits l = spinbox<T>::limits(ctx);
         return {{l.min.x, l.min.y}, {Width, l.max.y}};
     }
+
 };
 
 template<typename T>
