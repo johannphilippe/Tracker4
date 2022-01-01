@@ -38,13 +38,18 @@ set(ELEMENTS_APP_SOURCES
 
       # Animations
       ${CMAKE_CURRENT_SOURCE_DIR}/src/animations/generic_animation.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/animations/generic_animation.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/animations/fps_model.h
 
       # Controllers
       ${CMAKE_CURRENT_SOURCE_DIR}/src/controllers/cell_selection_controller.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/controllers/cell_selection_controller.cpp
 
       #Dialogs
       ${CMAKE_CURRENT_SOURCE_DIR}/src/dialogs/options_dialog.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/dialogs/options_dialog.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/dialogs/elements_dialog_base.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/dialogs/elements_dialog_base.cpp
 
       # Models
       ${CMAKE_CURRENT_SOURCE_DIR}/src/models/curve_point.h
@@ -56,6 +61,7 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/curve_editor.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/curve_editor.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_radio.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_radio.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_content.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_content.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_content.h
@@ -65,9 +71,13 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_cell.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_cell.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/dynamic_size_cell_composer.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_box.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_box.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_container.h
 
       # Tracker Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
@@ -92,10 +102,12 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_theme.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_theme.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/jtracker_globals.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/filesystem.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/config_data.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/config_data.cpp
 
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
       )

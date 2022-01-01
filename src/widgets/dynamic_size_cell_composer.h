@@ -4,7 +4,6 @@
 #include<elements.hpp>
 using namespace cycfi::elements;
 
-
 struct resize_condition
 {
     bool update_width = true;
@@ -72,7 +71,6 @@ public:
         resize_conditions->update_width = false;
 
     }
-
 
     size_t _size;
     composer_function _composer;

@@ -18,12 +18,10 @@
 using namespace std;
 using namespace cycfi::elements;
 
-
 namespace curves {
 template<typename T>
 class cubic_spline
 {
-
 public:
 
     cubic_spline()

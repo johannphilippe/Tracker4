@@ -15,27 +15,10 @@ class curve_editor_view  : public array_composite<3, vtile_element> //: public v
 public:
     curve_editor_view();
 
-    inline auto make_help_button()
-    {
-        auto hb = icon_button(icons::info, 2.0, colors::light_steel_blue);
-        hb.on_click = [&](bool b){
-            if(b) {
-                make_info_popup();
-            }
-        };
-        layered_button help = hb;
-        return  align_center(htile(help));
-
-    }
-
-    void mode_selection(bool b, curve_mode m)
-    {
-        if(!b) return;
-        editor.get_controller().mode = m;
-        tracker_app::get_instance()->_view.refresh();
-    }
-
+    inline auto make_help_button();
+    void mode_selection(bool b, curve_mode m);
     void make_info_popup();
+
     inline auto make_mode_buttons()
     {
 

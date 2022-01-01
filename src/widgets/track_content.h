@@ -110,7 +110,7 @@ public:
     void click_select(context const&ctx, mouse_button btn, size_t line, size_t col);
     void unselect();
 
-    // cell handle
+    // cell handle - simple utility to avoid verbosity
     std::shared_ptr<track_cell>& get_cell_at(size_t line, size_t col);
     std::shared_ptr<track_cell>& get_main_cell();
 

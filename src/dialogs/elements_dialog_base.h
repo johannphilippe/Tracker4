@@ -13,31 +13,12 @@ public:
     elements_dialog_base(std::string name)
         : _name(name)
     {}
-    virtual void make_content() {content_ptr = share(box(colors::blue));}
+    virtual void make_content();
 
-    void make_dialog()
-    {
-        make_content();
-        point win_size = jtracker::get_app()->_win.size();
-        dialog_ptr = share( closable_child_window(_name
-                                           , point(win_size.x / 2, win_size.y / 2)
-                                           , link(*content_ptr) ));
-    }
+    void make_dialog();
 
-    void open()
-    {
-        if(_is_displayed) return;
-        make_dialog();
-        jtracker::get_app()->_view.add(dialog_ptr);
-        _is_displayed = true;
-    }
-
-    void close()
-    {
-        if(!_is_displayed) return;
-        jtracker::get_app()->_view.remove(dialog_ptr);
-        _is_displayed = false;
-    }
+    void open();
+    void close();
 
 
 protected:
@@ -48,21 +29,15 @@ protected:
 
 };
 
-
 class elements_dialog : public elements_dialog_base
 {
 public:
     elements_dialog(std::string name, std::function<element_ptr(void)> element_builder)
         : elements_dialog_base(name)
         , builder_function(element_builder)
+    {}
 
-    {
-    }
-    void make_content() override
-    {
-        content_ptr = builder_function();
-    }
-
+    void make_content() override;
 private:
     std::function<element_ptr(void)> builder_function;
 };

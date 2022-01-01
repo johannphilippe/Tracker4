@@ -53,6 +53,10 @@ public:
         , tracker_res( fs::path(tracker_dir).append("res"))
         , tracker_config(fs::path(tracker_dir).append("config"))
         , tracker_project(fs::path(tracker_dir).append("project"))
+        , tracker_audio_config(fs::path(tracker_config).append("audio_config.json"))
+        , tracker_general_config(fs::path(tracker_config).append("general_config.json"))
+        , tracker_score_data(fs::path(tracker_project).append("score_data.json"))
+        , tracker_orc_data(fs::path(tracker_project).append("orc_data.json"))
     {
         std::cout << "Home Directory : " << home_directory << std::endl
                   << "Tracker Dir : "  << tracker_dir << std::endl
@@ -64,6 +68,7 @@ public:
         fs::create_directories(tracker_res);
         fs::create_directories(tracker_config);
         fs::create_directories(tracker_project);
+
     }
 
     // user home directory
@@ -76,6 +81,12 @@ public:
     const fs::path tracker_config;
     // Data of current projet
     const fs::path tracker_project;
+
+    // Tracker files
+    const fs::path tracker_audio_config;
+    const fs::path tracker_general_config;
+    const fs::path tracker_score_data;
+    const fs::path tracker_orc_data;
 };
 
 
