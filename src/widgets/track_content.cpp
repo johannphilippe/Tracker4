@@ -1,47 +1,34 @@
 #include "track_content.h"
 
-void track_line::set_num_cols(size_t num_cols)
+template<typename T>
+std::shared_ptr<T> track_content<T>::make_line(size_t i)
 {
-    if(num_cols == cells.size()) return;
-    if(num_cols > cells.size())
+    if(i >= _lines.size())
     {
-        for(size_t i = cells.size(); i < num_cols; i++)
-        {
-            cells.push_back(
-                // The 40 is for P2 in Csound. It should be smaller (30, or 25) but needs to wait for the size bug to be fixed in elements.
-                std::make_shared<track_cell>((i==1) ? 40 : 60, get_event_color(event_type))
-                );
-            cells.back()->on_click = [&, i](context const& ctx, mouse_button btn)
-            {
-            if(click_cbk != nullptr)
-                (*click_cbk)(ctx, btn, line_index, i);
-            };
-        this->push_back(cells.back());
-        }
+        std::cout << "Overflow in lines " << std::endl;
+        throw("Overflow in lines");
     }
-    else if(num_cols < cells.size() && num_cols >= 4)
+    if(_lines[i] == nullptr)
     {
-        while(num_cols < cells.size())
-        {
-            cells.pop_back();
-            pop_back();
-        }
+        _lines[i] = std::make_shared<T>( fully_visible ? num_cols : 4, i, static_cast<track_event_type>(rand() % 6));
+        _lines[i]->click_cbk = &cell_click_callback;
     }
+    return _lines[i];
 }
 
-void track_line::update_label(bool create)
-{
-    color c = (jtracker::data.grid_step > 0 && ((line_index % jtracker::data.grid_step) == 0) ) ?
-            jtracker::theme.track_label_index_hot_color :
-            jtracker::theme.track_label_index_color;
-    auto lab = make_fixed_size_label_with_background<4>(std::to_string(line_index), c );
-    if(create)
-        push_back(lab);
-    else
-        data()[0] = lab;
-}
+    // track content constructor
+template<typename T>
+track_content<T>::track_content(size_t num_lines, size_t num_cols) :
+    vdynamic_list(
+        make_resizable_composer(num_lines, [this](size_t i) { return make_line(i);}, &resize_conditions)
+  ),
+    num_cols(num_cols),
+    _lines(num_lines, nullptr)
+{}
 
-void track_content::display_visible()
+
+template<typename T>
+void track_content<T>::display_visible()
 {
     for(auto & it : _lines)
     {
@@ -52,31 +39,37 @@ void track_content::display_visible()
     update();
 }
 
-void track_content::update_labels()
+template<typename T>
+void track_content<T>::update_labels()
 {
     for(auto & it : _lines)
         if(it.get() != nullptr)
             it->update_label();
 }
 
-void track_content::update_lines()
+template<typename T>
+void track_content<T>::update_lines()
 {
     resize(jtracker::data.number_of_lines);
     _lines.resize(jtracker::data.number_of_lines);
 }
-void track_content::show_fully(bool b)
+
+template<typename T>
+void track_content<T>::show_fully(bool b)
 {
     fully_visible = b;
     display_visible();
 }
 
-void track_content::toggle_show()
+template<typename T>
+void track_content<T>::toggle_show()
 {
     fully_visible = !fully_visible;
     display_visible();
 }
 
-void track_content::set_num_cols(size_t cols)
+template<typename T>
+void track_content<T>::set_num_cols(size_t cols)
 {
     if(cols == num_cols) return;
     num_cols = cols;
@@ -91,14 +84,16 @@ void track_content::set_num_cols(size_t cols)
     resize_conditions.update_width = true;
 }
 
-std::u32string_view track_content::get_at(size_t line, size_t col)
+template<typename T>
+std::u32string_view track_content<T>::get_at(size_t line, size_t col)
 {
     if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     return get_cell_at(line, col)->get_text();
 }
 
-std::string track_content::get_as_string_at(size_t line, size_t col)
+template<typename T>
+std::string track_content<T>::get_as_string_at(size_t line, size_t col)
 {
     if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
@@ -106,29 +101,33 @@ std::string track_content::get_as_string_at(size_t line, size_t col)
     return std::string(v.begin(), v.end());
 }
 
-void track_content::set_at(size_t line, size_t col, std::string_view text)
+template<typename T>
+void track_content<T>::set_at(size_t line, size_t col, std::string_view text)
 {
     if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     get_cell_at(line, col)->set_text(text);
 }
 
-void track_content::set_at(size_t line, size_t col, std::string text)
+template<typename T>
+void track_content<T>::set_at(size_t line, size_t col, std::string text)
 {
     if(line >= _lines.size() || col >= num_cols)
         throw("Out of bounds -> line or col is above track size");
     get_cell_at(line, col)->set_text(text);
 }
 
-void track_content::clear_cells()
+template<typename T>
+void track_content<T>::clear_cells()
 {
     for(auto & it : _lines)
         for(auto & it2 : it->cells)
-        it2->set_text("");
+            it2->set_text("");
 
 }
 
-bool track_content::key(context const& ctx, key_info k)
+template<typename T>
+bool track_content<T>::key(context const& ctx, key_info k)
 {
     if(!selection.has_selection) return true;
     cell_selection old = selection.selected[selection.current_cell_index];
@@ -274,8 +273,10 @@ bool track_content::key(context const& ctx, key_info k)
     return true;
 }
 
-void track_content::click_select(context const&, mouse_button btn, size_t line, size_t col)
+template<typename T>
+void track_content<T>::click_select(context const&, mouse_button btn, size_t line, size_t col)
 {
+    std::cout << "click select in track " << std::endl;
     if(btn.down) {
         view &v = jtracker::tracker_app::get_instance()->_view;
 
@@ -391,7 +392,8 @@ void track_content::click_select(context const&, mouse_button btn, size_t line, 
     }
 }
 
-void track_content::unselect()
+template<typename T>
+void track_content<T>::unselect()
 {
    view &v = jtracker::tracker_app::get_instance()->_view;
    if(selection.is_editing)
@@ -410,13 +412,19 @@ void track_content::unselect()
    selection.clear();
 }
 
-std::shared_ptr<track_cell>& track_content::get_cell_at(size_t line, size_t col)
+template<typename T>
+std::shared_ptr<track_cell>& track_content<T>::get_cell_at(size_t line, size_t col)
 {
     return _lines[line]->cells[col];
 }
 
-std::shared_ptr<track_cell>& track_content::get_main_cell()
+template<typename T>
+std::shared_ptr<track_cell>& track_content<T>::get_main_cell()
 {
     return _lines[selection.main_selected_line()]->
             cells[selection.main_selected_column()];
 }
+
+
+template class track_content<track_line>;
+template class track_content<tempo_track_line>;

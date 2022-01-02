@@ -78,6 +78,10 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_event_editor.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_container.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/expandable.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/expandable.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_line.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_line.cpp
 
       # Tracker Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
@@ -85,10 +89,15 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_track.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_track.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/sniper_track.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/track_view.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_menus.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track_line.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track_line.cpp
 
       # Maths
       ${CMAKE_CURRENT_SOURCE_DIR}/src/maths/cubic_spline.h
@@ -108,6 +117,8 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/filesystem.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/config_data.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/config_data.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/tracker_actions.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/tracker_actions.cpp
 
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
       )

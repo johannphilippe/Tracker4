@@ -1,5 +1,8 @@
 #include<widgets/tracker/track_view.h>
 
+//////////////////////////////////////////////////////////////////////////
+// Materials
+/////////////////////////////////////////////////////////////////////////
 track_view_bar::track_view_bar() :
     array_composite<2, layer_element>(pane("Track controls",
                                            htile(
@@ -24,6 +27,9 @@ view_limits main_cell_editor_layout::limits(basic_context const& ctx) const
     return l;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Track Set
+//////////////////////////////////////////////////////////////////////////
 
 track_set::track_set() : htile_composite()
 {}
@@ -132,45 +138,61 @@ view_limits track_set::limits(basic_context const& ctx) const
     return l;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Track View
+/////////////////////////////////////////////////////////////////////////
+
 track_view::track_view() :
     array_composite<3, vtile_element>(vtile(
                                           link(bar),
                                           vtile(vspacer(8), link(text_box), vspacer(8)),
-                                          hold(
-                                              share(
-                                                  scroller(
-                                                      margin({5, 20, 5, 30},
-                                                             link(
-                                                                 t_set
-                                                                 )))))))
+
+                                              hold(
+                                                  share(
+                                                      htile(
+                                                      scroller(
+                                                          margin({5, 20, 5, 30},
+                                                                     link(t_set)
+                                                                     )),
+                                                      margin({5, 20, 20, 0},
+                                                             link(t_tempo) ))))
+                                          ))
+
 {
+    // on track_nbr change
     bar.track_nbr.on_change = [&](size_t v)
     {
         t_set.set_num_tracks(v);
         t_set.update_lines();
         jtracker::tracker_app::get_instance()->_view.refresh(*this);
     };
+
+    // should be done at init from "tracknbr" global  (remove this painful code)
     bar.track_nbr.set_value(2);
     t_set.set_num_tracks(bar.track_nbr.get_value());
 
+    // idem
     bar.line_nbr.set_value(16);
 
-    // Design note : should probably set always the global data, then refresh what needs to be
-    // better than calling setters all the time
+    // on line number change
     bar.line_nbr.on_change = [&](size_t l)
     {
       jtracker::data.number_of_lines = l;
       t_set.update_lines();
       t_set.update_labels(false);
-      view &v = jtracker::tracker_app::get_instance()->_view;
+      t_tempo.ptr->t_content.update_lines();
+      t_tempo.ptr->t_content.update_labels();
+      view &v = jtracker::get_app()->_view;
       v.layout();
       v.refresh();
     };
 
+    // on grid nbr change
     bar.grid_step.on_change = [&](size_t change)
     {
       jtracker::data.grid_step = change;
       t_set.update_labels();
+      t_tempo.ptr->t_content.update_labels();
       jtracker::tracker_app::get_instance()->_view.refresh(*this);
     };
 }
@@ -182,3 +204,5 @@ view_limits track_view::limits(basic_context const& ctx) const
     normal.max = view_size;
     return normal;
 }
+
+

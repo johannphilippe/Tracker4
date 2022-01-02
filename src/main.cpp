@@ -9,6 +9,9 @@
 #include<widgets/tracker/track_view.h>
 #include<widgets/tracker/curve_editor_view.h>
 #include<widgets/tracker/tracker_menus.h>
+
+
+#include<widgets/expandable.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -25,6 +28,7 @@ int main(int argc, char* argv[])
     curve_editor_view editor;
     track_view tv;
     tv.t_set.add_track(track_type::sniper_track);
+
 
     auto tabs = vnotebook(
                app->_view,

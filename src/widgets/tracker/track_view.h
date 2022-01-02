@@ -9,6 +9,8 @@
 #include<widgets/tracker/sniper_track.h>
 #include<widgets/track_base.h>
 #include<widgets/spinbox.h>
+#include<widgets/tracker/tempo_track.h>
+#include<widgets/expandable.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -56,6 +58,10 @@ public:
     main_cell_editor editor;
 };
 
+//////////////////////////////////////////////////////////////////////////
+// Track Set
+// Horizontal list of Tracks
+/////////////////////////////////////////////////////////////////////////
 class track_set : public htile_composite
 {
 public:
@@ -74,6 +80,10 @@ public:
     std::vector<std::variant<tracker_track_ptr, sniper_track_ptr>> tracks;
 };
 
+//////////////////////////////////////////////////////////////////////////
+// Track View
+// Vertical list containing track set, tempo_track and common controls
+/////////////////////////////////////////////////////////////////////////
 class track_view : public array_composite<3, vtile_element>
 {
 public:
@@ -84,6 +94,7 @@ public:
     track_view_bar bar;
     main_cell_editor_layout text_box;
     track_set t_set;
+    tempo_track_expander t_tempo;
 };
 
 }

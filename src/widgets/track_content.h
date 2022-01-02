@@ -14,84 +14,27 @@
 #include<widgets/dynamic_size_cell_composer.h>
 #include<tracker/jtracker_globals.h>
 
+#include<widgets/track_line.h>
+#include<widgets/tracker/tempo_track_line.h>
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
 using namespace jtracker;
-
-/*
- * Represents a line of cells.
-*/
-class track_line : public htile_composite
-{
-public:
-    track_line(size_t num, size_t l_idx,
-               track_event_type ev_type = track_event_type::none) :
-        htile_composite(),
-        line_index(l_idx),
-        event_type(ev_type)
-    {
-        update_label(true);
-        set_num_cols(num);
-    }
-
-    track_line(size_t num, size_t l_idx) :
-        htile_composite(), line_index(l_idx)
-    {
-        update_label(true);
-        set_num_cols(num);
-    }
-
-    void set_num_cols(size_t num_cols);
-    void update_label(bool create = false);
-
-    std::function<void(context const&ctx, mouse_button btn, size_t, size_t col_index)> *click_cbk = nullptr;
-    std::function<void(key_info k)> on_key = [](key_info){};
-
-    std::vector<std::shared_ptr<track_cell>> cells;
-    size_t line_index = 0;
-
-    int _to_focus;
-
-    track_event_type event_type;
-
-    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
-            [](size_t, size_t, std::string_view) {};
-};
 
 
 /*
  * Represents a spreadsheet of dynamic cells
 */
+template<typename T = track_line>
 class track_content : public vdynamic_list
 {
 public:
 
     // line maker
-    std::shared_ptr<track_line> make_line(size_t i)
-    {
-        if(i >= _lines.size())
-        {
-            std::cout << "Overflow in lines " << std::endl;
-            throw("Overflow in lines");
-        }
-        if(_lines[i] == nullptr)
-        {
-            _lines[i] = std::make_shared<track_line>( fully_visible ? num_cols : 4, i, static_cast<track_event_type>(rand() % 6));
-            _lines[i]->click_cbk = &cell_click_callback;
-
-        }
-        return _lines[i];
-    }
+    std::shared_ptr<T> make_line(size_t i);
 
     // track content constructor
-    track_content(size_t num_lines = jtracker::data.number_of_lines, size_t num_cols = jtracker::data.default_column_number) :
-        vdynamic_list(
-            make_resizable_composer(num_lines, [this](size_t i) { return make_line(i);}, &resize_conditions)
-            ),
-        num_cols(num_cols),
-        _lines(num_lines, nullptr)
-    {
-    }
+    track_content(size_t num_lines = jtracker::data.number_of_lines, size_t num_cols = jtracker::data.default_column_number);
+
 
     // display only 4 cells or full track
     void toggle_show();
@@ -125,13 +68,13 @@ public:
     void update_lines();
     void update_labels();
 
-    std::vector<std::shared_ptr<track_line>> _lines;
+    std::vector<std::shared_ptr<T>> _lines;
 
+    using cell_click_cbk_type = std::function<void(context const&, mouse_button, size_t, size_t)>;
+    using text_callback_type = std::function<void(size_t, size_t, std::string_view)>;
 
-    std::function<void(context const& ctx, mouse_button btn, size_t l, size_t c)> cell_click_callback =
-            [&](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);};
-    std::function<void(size_t line_idx, size_t cell_idx, std::string_view t)> text_callback =
-            [](size_t, size_t, std::string_view){};
+    cell_click_cbk_type cell_click_callback = [&](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);};
+    text_callback_type text_callback = [](size_t, size_t, std::string_view) {};
 
     resize_condition resize_conditions;
 protected:

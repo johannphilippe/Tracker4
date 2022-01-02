@@ -3,12 +3,17 @@
 
 #include<elements.hpp>
 #include<dialogs/options_dialog.h>
+#include<tracker/tracker_actions.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
 namespace jtracker {
 
-auto make_file_popup()
+
+///////////////////////////////////////////////////////////////
+/// Menus
+///////////////////////////////////////////////////////////////
+inline auto make_file_popup()
 {
     auto popup  = button_menu("File", menu_position::bottom_right);
 
@@ -19,6 +24,11 @@ auto make_file_popup()
     auto new_file = menu_item("New project", sk_new);
     auto open_file = menu_item("Open project", sk_open);
     auto save_file = menu_item("Save file", sk_save);
+
+    open_file.on_click = [&]()
+    {
+        open_project_action();
+    };
 
     auto menu =
        layer(
@@ -33,7 +43,7 @@ auto make_file_popup()
     return popup;
 }
 
-auto make_option_popup()
+inline auto make_option_popup()
 {
     auto popup = button_menu("Options", menu_position::bottom_right);
     auto sk_param = shortcut_key{key_code::p, mod_action};
@@ -57,7 +67,7 @@ auto make_option_popup()
 }
 
 
-auto make_tracker_menus()
+inline auto make_tracker_menus()
 {
     return htile(make_file_popup(), make_option_popup());
 }

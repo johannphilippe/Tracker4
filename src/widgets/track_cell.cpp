@@ -87,6 +87,7 @@ view_limits track_cell::limits(basic_context const&) const
 
 bool track_cell::click(context const& ctx, mouse_button btn)
 {
+    std::cout << "cell clicked " << std::endl;
     on_click(ctx, btn);
     text_box.click(ctx, btn);
     return true;
