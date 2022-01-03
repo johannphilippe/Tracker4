@@ -9,13 +9,12 @@ using namespace cycfi::artist;
 
 namespace jtracker {
 
-
 ///////////////////////////////////////////////////////////////
-/// Menus
+// Files Menu
 ///////////////////////////////////////////////////////////////
 inline auto make_file_popup()
 {
-    auto popup  = button_menu("File", menu_position::bottom_right);
+    auto popup  = button_menu("Files", menu_position::bottom_right);
 
     auto sk_new = shortcut_key{key_code::n, mod_action};
     auto sk_open = shortcut_key{key_code::o, mod_action};
@@ -43,6 +42,9 @@ inline auto make_file_popup()
     return popup;
 }
 
+///////////////////////////////////////////////////////////////
+// Options Menu
+///////////////////////////////////////////////////////////////
 inline auto make_option_popup()
 {
     auto popup = button_menu("Options", menu_position::bottom_right);
@@ -69,7 +71,11 @@ inline auto make_option_popup()
 
 inline auto make_tracker_menus()
 {
-    return htile(make_file_popup(), make_option_popup());
+    return htile(
+                hsize(120, make_file_popup()),
+                hsize(120, make_option_popup()),
+                box(colors::red.opacity(0))
+                );
 }
 
 

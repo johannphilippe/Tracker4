@@ -38,6 +38,14 @@ struct tracker_theme
     color sniper_track_background_color;
     color sniper_track_lines_color;
 
+    // events
+    color none_event_color;
+    color csound_event_color;
+    color lua_rt_event_color;
+    color chuck_rt_color;
+    color antescofo_rt_color;
+    color audio_sample_color;
+
     /***********************
      * FONTS
     ***********************/

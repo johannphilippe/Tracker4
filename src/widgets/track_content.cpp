@@ -130,6 +130,7 @@ void track_content<T>::clear_cells()
 template<typename T>
 bool track_content<T>::key(context const& ctx, key_info k)
 {
+
     if(!selection.has_selection) return true;
     cell_selection old = selection.selected[selection.current_cell_index];
     cell_selection new_sel = old;
@@ -148,6 +149,7 @@ bool track_content<T>::key(context const& ctx, key_info k)
         ctx.view.refresh();
     };
 
+    // updates the selection of cells
     auto update_selection = [&]()
     {
         if(old.line_index == new_sel.line_index && old.column_index == new_sel.column_index) return;
@@ -166,7 +168,6 @@ bool track_content<T>::key(context const& ctx, key_info k)
                     get_cell_at(selection.main_selected_line(), selection.main_selected_column())->background.current_color
                     );
         tracker_app::get_animator_pool().animate(v);
-
         do_focus();
     };
 
@@ -179,7 +180,7 @@ bool track_content<T>::key(context const& ctx, key_info k)
       } else if(new_sel.line_index > 0)
       {
           new_sel.line_index--;
-          // -2 here because of the static label at the begining of the line
+          // -2 here because of the static label at the begining of the line (should be -1 otherwise)
           new_sel.column_index = _lines[new_sel.line_index]->size() - 2;
           update_selection();
       }
@@ -209,6 +210,7 @@ bool track_content<T>::key(context const& ctx, key_info k)
             return get_main_cell()->text_box.key(ctx, k);
         }
         default:
+            update_selection();
             break;
         }
     }
@@ -279,6 +281,7 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
 {
     if(btn.down) {
         view &v = jtracker::tracker_app::get_instance()->_view;
+
 
         auto simple_select = [&]()
         {
@@ -355,7 +358,8 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
         if(btn.modifiers == 0)
         {
             simple_select();
-        } else if(btn.modifiers & mod_control)
+        }
+        else if(btn.modifiers & mod_control)
         {
             // find if is already selected
             int sel = selection.is_selected(line, col);
@@ -380,7 +384,8 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
                 tracker_app::get_animator_pool().animate(v);
             }
 
-        } else if(btn.modifiers & mod_shift)
+        }
+        else if(btn.modifiers & mod_shift)
         {
             if(!selection.has_selection)
                 return simple_select();

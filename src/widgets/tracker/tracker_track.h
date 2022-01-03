@@ -23,7 +23,6 @@ public:
     tracker_track(size_t track_index = 0);
 
     bool click(context const& ctx, mouse_button btn) override;
-
     void end_focus() override;
 
     track_content<track_line> t_content;

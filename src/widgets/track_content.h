@@ -20,7 +20,6 @@ using namespace cycfi::elements;
 using namespace std::chrono_literals;
 using namespace jtracker;
 
-
 /*
  * Represents a spreadsheet of dynamic cells
 */

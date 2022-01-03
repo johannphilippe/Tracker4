@@ -4,7 +4,6 @@ Todo list for this new version of jo_tracker created with elements.
 
 The MUST have of this, is that we need to be able to process everything in Csound (export a CSD, render audio etc from Csound)
 
-
 ##  General
 
 * Find a new name
@@ -46,7 +45,6 @@ The project must contain or import those sources and build it so it can be insta
 
 ## Functionnalities 
 
-
 ### To Add 
 
 * Action list for common actions, and user defined actions (API)
@@ -79,3 +77,9 @@ The project must contain or import those sources and build it so it can be insta
 * Luajit Process same as chuck, + needs realtime implementation
 * Waveform : Csound code formatting. Requires drag & drop to be implemented though. 
 * Why not JSFX ? Already there as csound opcode
+
+## Bugs
+
+* Tempo track : keys do not refresh the view
+* Basic_input_box placeholder not in right place (main text box, and options)
+* Improve drag event in sniper track -> drag from the middle must not be an obligation, create an event and expand it immediatly

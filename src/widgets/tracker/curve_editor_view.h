@@ -28,7 +28,6 @@ public:
         auto cubbezier = squared_radio_button("cubbezier");
         auto linear = squared_radio_button("linear");
 
-
         linear.select(true);
         spline_mode.on_click = [&](bool b) {
             mode_selection(b, curve_mode::cubic_spline);

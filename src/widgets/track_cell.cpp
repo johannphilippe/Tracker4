@@ -1,5 +1,8 @@
 #include<widgets/track_cell.h>
 
+////////////////////////////////////////////////////////////////
+// Tracker cells dynamic background
+////////////////////////////////////////////////////////////////
 cell_background::cell_background(float width, color inactive_color)
     : tracker<>()
     , _width(width)
@@ -14,6 +17,15 @@ void cell_background::draw(context const& ctx)
     ctx.canvas.fill_color(*current_color);
     ctx.canvas.fill_round_rect(ctx.bounds, 4);
     ctx.canvas.fill();
+
+    if(is_in_grid)
+    {
+        ctx.canvas.line_width(2);
+        ctx.canvas.stroke_color(colors::bisque);
+        ctx.canvas.stroke_round_rect(ctx.bounds, 4);
+        ctx.canvas.stroke();
+    }
+
     ctx.canvas.line_width(0.5);
     ctx.canvas.stroke_color(colors::navajo_white);
     ctx.canvas.stroke_round_rect(ctx.bounds, 4);
@@ -46,6 +58,9 @@ void cell_background::set_color_no_redraw(color c)
 
 bool cell_background::wants_focus() const {return false;}
 
+////////////////////////////////////////////////////////////////
+// Tracker cells
+////////////////////////////////////////////////////////////////
 void cell_background::set_inactive_color(color _inactive)
 {
     inactive = _inactive;
@@ -87,8 +102,14 @@ view_limits track_cell::limits(basic_context const&) const
 bool track_cell::click(context const& ctx, mouse_button btn)
 {
     on_click(ctx, btn);
-    text_box.click(ctx, btn);
-    return true;
+    return text_box.click(ctx, btn);
+}
+
+bool track_cell::text(const context &ctx, text_info info)
+{
+    bool res = text_box.text(ctx, info);
+    ctx.view.refresh(text_box);
+    return res;
 }
 
 void track_cell::set_text(std::string_view s) {text_box.set_text(s);}

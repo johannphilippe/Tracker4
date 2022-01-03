@@ -70,7 +70,7 @@ struct expandable_icon_button_element : public plain_icon_button_element<hilite>
       ctx.canvas.line_width(1);
       ctx.canvas.stroke_round_rect(ctx.bounds, 4);
       ctx.canvas.stroke();
-     draw_plain_icon_button(
+      draw_plain_icon_button(
         ctx, this->_code, this->_size * get_theme().icon_font._size, hilite
      );
   }
@@ -100,35 +100,6 @@ public:
     {}
 };
 
-// Now useless -> to remove
-template<expandable_origin_mode Mode, typename T>
-inline auto base_expander(view &v, element_ptr ptr, size_t pos = 0)
-{
-    auto vc =  T();
-    auto but = expandable_bar<Mode>();
-
-    std::cout << "element ptr " << ptr.get() << std::endl;
-    but.on_click = [&, ptr, pos](bool b)
-    {
-        std::cout << "element ptr on click " << ptr.get()  << "   " << ptr.use_count() << std::endl;
-      if(b)
-      {
-          vc.insert(vc.begin() + pos, ptr );
-      }
-      else
-      {
-          vc.end_focus();
-          vc.erase(vc.begin() + pos);
-      }
-
-      v.layout();
-      v.refresh();
-    };
-    vc.push_back(share( but ));
-    v.layout();
-    return vc;
-}
-
 ////////////////////////////////////////////////////////////////////////////
 // Expander view - allows its child to expand or not on button click
 // T must be htile_composite or vtile_composite
@@ -146,6 +117,8 @@ public:
             if(b)
             {
                 this->insert(this->begin() + pos,  ptr);
+                this->focus(pos);
+                this->begin_focus();
             }
             else
             {
@@ -178,8 +151,8 @@ public:
         element * el  = this->hit_test(ctx, btn.pos);
         if(el == but.get())
         {
-            but->click(ctx, btn);
-            return true;
+            bool res = but->click(ctx, btn);
+
         }
         else if(but->expanded && el == _ptr.get())
         {

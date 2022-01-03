@@ -86,8 +86,6 @@ set(ELEMENTS_APP_SOURCES
       # Tracker Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tab_view.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_track.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tracker_track.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/sniper_track.h

@@ -145,7 +145,7 @@ track_scrollers::track_scrollers()
               link(t_set)))
     , t_tempo_scroller(std::make_shared<tempo_scroller_t>(
                            vscroller(
-                               right_margin(15, link( t_tempo )))))
+                               right_margin(0, link( t_tempo )), no_scrollbars)))
     , t_tempo_expander(t_tempo_scroller)
 {
     t_set_scroller.on_scroll = [&](point p )
@@ -176,10 +176,10 @@ track_view::track_view()
                                               hold(
                                                   share(
                                                       htile(
-                                                          margin({5, 20, 5, 0},
+                                                          margin({5, 5, 5, 0},
                                                              link(t_set_scroller)
-                                                                 ),
-                                                      margin({5, 20, 5, 0},
+                                                                 ), hspacer(10),
+                                                      margin({5,5, 5, 0},
                                                              link(t_tempo_expander) ))))
                                           ))
 

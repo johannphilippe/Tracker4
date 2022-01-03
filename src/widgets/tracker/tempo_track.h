@@ -13,8 +13,10 @@ class tempo_track : public array_composite<2, vtile_element>
 {
 public:
     array_composite<2, vtile_element> make_buttons_tile();
-
     tempo_track();
+
+    bool click(context const& ctx, mouse_button btn) override;
+    bool text(context const& ctx, text_info info) override;
 
     track_content<tempo_track_line> t_content;
 };

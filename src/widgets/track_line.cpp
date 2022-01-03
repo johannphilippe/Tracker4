@@ -31,7 +31,8 @@ void track_line::set_num_cols(size_t num_cols)
 
 void track_line::update_label(bool create)
 {
-    color c = (jtracker::data.grid_step > 0 && ((line_index % jtracker::data.grid_step) == 0) ) ?
+    bool is_grid_focus = jtracker::data.grid_step > 0 && (line_index % jtracker::data.grid_step) == 0;
+    color c = is_grid_focus ?
             jtracker::theme.track_label_index_hot_color :
             jtracker::theme.track_label_index_color;
     auto lab = make_fixed_size_label_with_background<4>(std::to_string(line_index), c );
@@ -39,4 +40,9 @@ void track_line::update_label(bool create)
         push_back(lab);
     else
         data()[0] = lab;
+
+    for(size_t i = 0; i < cells.size(); ++i)
+    {
+        cells[i]->background.is_in_grid = is_grid_focus;
+    }
 }

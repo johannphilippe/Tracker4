@@ -2,6 +2,7 @@
 #define TRACK_EVENT_H
 
 #include<elements.hpp>
+#include<tracker/jtracker_theme.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
@@ -23,32 +24,33 @@ inline color get_event_color(track_event_type t)
     {
     case track_event_type::none:
     {
-        c = get_theme().panel_color;
+        c = jtracker::theme.none_event_color;
+        //c = get_theme().panel_color;
         break;
     }
     case track_event_type::csound_score:
     {
-        c = colors::midnight_blue.opacity(op);
+        c = jtracker::theme.csound_event_color.opacity(op);
         break;
     }
     case track_event_type::lua_rt_process:
     {
-        c = colors::dark_green.opacity(op);
+        c = jtracker::theme.lua_rt_event_color.opacity(op);
         break;
     }
     case track_event_type::chuck_rt_process:
     {
-        c = colors::dark_slate_blue.opacity(op);
+        c = jtracker::theme.chuck_rt_color.opacity(op);
         break;
     }
     case track_event_type::antescofo_rt_process:
     {
-        c = colors::dark_orchid.opacity(op);
+        c = jtracker::theme.antescofo_rt_color.opacity(op);
         break;
     }
     case track_event_type::audio_sample:
     {
-        c = colors::firebrick.opacity(op);
+        c = jtracker::theme.audio_sample_color.opacity(op);
         break;
     }
     default:

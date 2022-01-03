@@ -5,7 +5,6 @@
 ////////////////////////////////////////////////////////////////////////
 array_composite<2, vtile_element> tempo_track::make_buttons_tile()
 {
-
     auto clear_but = icon_button(icons::cancel, 1.0, jtracker::theme.clear_buttons_color);
     clear_but.on_click = [&](bool)
     {
@@ -22,6 +21,22 @@ tempo_track::tempo_track()
     : array_composite<2, vtile_element>( vtile( make_buttons_tile(),link(t_content)  ))
 {
     t_content.update_lines();
+}
+
+bool tempo_track::click(context const& ctx, mouse_button btn)
+{
+    context rctx {ctx, ctx.bounds};
+    rctx.bounds.top += this->at(0).limits(ctx).max.y;
+    if(rctx.bounds.includes(btn.pos))
+    {
+        return this->at(1).click(rctx, btn);
+    }
+    return array_composite<2, vtile_element>::click(ctx, btn);
+}
+
+bool tempo_track::text(const context &ctx, text_info info)
+{
+    return at(1).text(ctx, info);
 }
 
 ////////////////////////////////////////////////////////////////////////

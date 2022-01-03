@@ -40,6 +40,7 @@ public:
     bool is_active;
     color inactive, active;
     std::shared_ptr<color_animation> current_color;
+    bool is_in_grid = false;
 };
 
 
@@ -53,9 +54,10 @@ public:
     virtual view_limits limits(basic_context const&) const override;
     bool click(context const& ctx, mouse_button btn) override;
 
-
     void set_text(std::string_view s);
     std::u32string_view get_text();
+
+    bool text(context const &ctx, text_info info) override;
 
     using click_function = std::function<void(context const& ctx, mouse_button btn)>;
     click_function on_click = [](context const &, mouse_button){ return false; };

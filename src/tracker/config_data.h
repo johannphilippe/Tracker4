@@ -8,15 +8,7 @@
 using json = nlohmann::json;
 
 constexpr static const size_t audio_rate_list[] =
-{22'050,
- 24'000,
- 44'100,
- 48'000,
- 88'200,
- 96'000,
- 176'400,
- 192'000};
-
+{22'050, 24'000, 44'100, 48'000, 88'200, 96'000, 176'400, 192'000};
 constexpr static const size_t audio_rate_list_size = sizeof(audio_rate_list)  / sizeof(size_t);
 
 struct audio_cs_option

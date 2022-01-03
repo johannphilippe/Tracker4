@@ -22,8 +22,16 @@ namespace jtracker {
         t.track_background_color			= 	rgba(28, 30, 34, 255);
         t.track_label_index_color			=	colors::grey[20].opacity(0.5);
         t.track_label_index_hot_color		=	colors::grey[50].opacity(0.5);
-        t.sniper_track_background_color		= 	rgb(15, 15, 40);
+        t.sniper_track_background_color		= 	rgba(15, 15, 35, 190);  //rgb(15, 15, 40);
         t.sniper_track_lines_color			= 	colors::wheat;
+
+
+        t.none_event_color					=   rgba(28, 30, 34, 192);
+        t.csound_event_color				=	colors::midnight_blue;
+        t.lua_rt_event_color				=	colors::dark_green;
+        t.chuck_rt_color					=	colors::dark_slate_blue;
+        t.antescofo_rt_color				=	colors::dark_orchid;
+        t.audio_sample_color				=	colors::firebrick;
 
         /***********************
         * FONTS

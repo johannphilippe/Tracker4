@@ -12,9 +12,7 @@ struct resize_condition
 
 class dynamic_vertical_cell_composer : public cell_composer
 {
-
 public:
-
     using cell_ptr = element_ptr;
     using composer_function = std::function<element_ptr(size_t)>;
 

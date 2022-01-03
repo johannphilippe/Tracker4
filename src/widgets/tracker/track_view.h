@@ -33,7 +33,6 @@ public:
     {}
 };
 
-
 class track_view_bar : public array_composite<2, layer_element>
 {
 public:
@@ -80,7 +79,6 @@ public:
     std::vector<std::variant<tracker_track_ptr, sniper_track_ptr>> tracks;
 };
 
-
 //////////////////////////////////////////////////////////////////////////
 // Track Scrollers
 /////////////////////////////////////////////////////////////////////////
@@ -91,7 +89,7 @@ public:
     track_scrollers();
 
     using link_set = indirect<reference<typename std::remove_reference<track_set>::type>>;
-    using link_tempo =indirect<reference<typename std::remove_reference<tempo_track>::type>>;
+    using link_tempo = indirect<reference<typename std::remove_reference<tempo_track>::type>>;
     using right_margin_t = margin_element<right_margin_rect, cycfi::remove_cvref_t<link_tempo>>;
     using set_scroller_t = proxy<cycfi::remove_cvref_t<link_set>, scroller_base>;
     using tempo_scroller_t = proxy<cycfi::remove_cvref_t<right_margin_t>, scroller_base>;
@@ -102,8 +100,6 @@ public:
     std::shared_ptr<tempo_scroller_t> t_tempo_scroller;
     tempo_track_expander t_tempo_expander;
 };
-
-
 
 //////////////////////////////////////////////////////////////////////////
 // Track View
