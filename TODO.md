@@ -1,6 +1,11 @@
 # Track
 
-- Add a longer text box at top of trackset that can be editable (linked to the selected cell) or enslaved. Must be able to "deactivate" (sniper track). 
+- Synchronize scrollers
+- Why does the second col of tempo track is not active ? 
+
+
+
+#PARTIALLY OK- Add a longer text box at top of trackset that can be editable (linked to the selected cell) or enslaved. Must be able to "deactivate" (sniper track). 
 #OK- tracker_track keys : (backspace, tab etc...). 
 #PartiallyOK- For cells : separate focus from select (can be selected, but not focused to allow other manipulations - like select multiple cells )
 #- Color modes for lines : antescofo/chuck, lua, Csound score, realtime line selection (csound perf).

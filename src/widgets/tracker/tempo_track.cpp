@@ -19,7 +19,7 @@ array_composite<2, vtile_element> tempo_track::make_buttons_tile()
 }
 
 tempo_track::tempo_track()
-    : array_composite<2, vtile_element>( vtile( make_buttons_tile(), hsize(100, link(t_content))  ))
+    : array_composite<2, vtile_element>( vtile( make_buttons_tile(),link(t_content)  ))
 {
     t_content.update_lines();
 }
@@ -44,11 +44,12 @@ tempo_track_ptr_t::tempo_track_ptr_t()
 
 
 ////////////////////////////////////////////////////////////////////////
-// Expander for tempo track
+// Expander of tempo track
 ////////////////////////////////////////////////////////////////////////
 tempo_track_expander::tempo_track_expander()
     : tempo_track_ptr_t()
-    , expander_base< expandable_origin_mode::right, htile_composite>(jtracker::get_app()->_view,  share(vscroller(hold(this->ptr))), 1)
-{
-    std::cout << "track pointer " << this->ptr.get() << std::endl;
-}
+    , expander_base< expandable_origin_mode::right, htile_composite>(jtracker::get_app()->_view,
+                                                                     share(
+                                                                         vscroller(
+                                                                             right_margin(15, hold(this->ptr)))), 1)
+{}

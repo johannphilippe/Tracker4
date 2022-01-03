@@ -44,7 +44,6 @@ void cell_background::set_color_no_redraw(color c)
     current_color->set_color_target(c);
 }
 
-
 bool cell_background::wants_focus() const {return false;}
 
 void cell_background::set_inactive_color(color _inactive)
@@ -61,7 +60,7 @@ track_cell::track_cell( float width, color inactive_color) :
     array_composite<2, layer_element>(
         layer(
         scroller(
-            hsize(100,
+            hsize(100 , // size of textbox inside scroller
               align_middle(
               margin({1,1,1,1},link(text_box)))),
             no_scrollbars | no_vscroll
@@ -87,7 +86,6 @@ view_limits track_cell::limits(basic_context const&) const
 
 bool track_cell::click(context const& ctx, mouse_button btn)
 {
-    std::cout << "cell clicked " << std::endl;
     on_click(ctx, btn);
     text_box.click(ctx, btn);
     return true;

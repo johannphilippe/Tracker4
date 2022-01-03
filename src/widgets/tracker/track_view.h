@@ -95,6 +95,7 @@ public:
     main_cell_editor_layout text_box;
     track_set t_set;
     tempo_track_expander t_tempo;
+    ttptr temp_ptr;
 };
 
 }

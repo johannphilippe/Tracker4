@@ -100,6 +100,7 @@ public:
     {}
 };
 
+// Now useless -> to remove
 template<expandable_origin_mode Mode, typename T>
 inline auto base_expander(view &v, element_ptr ptr, size_t pos = 0)
 {
@@ -137,23 +138,27 @@ class expander_base : public T
 {
 public:
     expander_base(view &v, element_ptr ptr, size_t pos = 0)
-        : T(), _ptr(ptr), but(share(expandable_bar<Mode>()))
+        : T(), _ptr(ptr), but(share(expandable_bar<Mode>())), _pos(pos)
     {
         but->on_click = [this, &v, ptr, pos](bool b)
         {
             but->expanded = b;
             if(b)
+            {
                 this->insert(this->begin() + pos,  ptr);
+            }
             else
             {
                 this->end_focus();
                 this->erase(this->begin() + pos);
             }
             v.layout();
+            v.refresh();
         };
 
         this->push_back(but);
         v.layout();
+        v.refresh();
     }
 
     view_limits limits(basic_context const& ctx) const override
@@ -162,43 +167,33 @@ public:
         if(!but->expanded) return bar_limits;
         view_limits sub_limits = _ptr->limits(ctx);
         if(Mode == expandable_origin_mode::top || Mode == expandable_origin_mode::bottom)
-            return {{bar_limits.min.x, bar_limits.min.y},{bar_limits.max.x , bar_limits.max.y  + sub_limits.max.y}};
+            return {{bar_limits.min.x, bar_limits.min.y + sub_limits.min.y},{bar_limits.max.x , bar_limits.max.y  + sub_limits.max.y}};
         else
-            return {{bar_limits.min.x, bar_limits.min.y},{bar_limits.max.x + sub_limits.max.x, bar_limits.max.y }};
+            return {{bar_limits.min.x + sub_limits.min.x, bar_limits.min.y},{bar_limits.max.x + sub_limits.max.x, bar_limits.max.y }};
     }
 
+    // useless, just for tests
+    bool click(context const& ctx, mouse_button btn) override
+    {
+        element * el  = this->hit_test(ctx, btn.pos);
+        if(el == but.get())
+        {
+            but->click(ctx, btn);
+            return true;
+        }
+        else if(but->expanded && el == _ptr.get())
+        {
+            composite_base::hit_info info = this->hit_element(ctx, btn.pos, true);
+            return info.element->click(context{ctx, info.bounds}, btn);
+        }
+        return true;
+    }
 
     element_ptr _ptr;
     std::shared_ptr<expandable_bar<Mode>> but;
+    size_t _pos;
 };
-/*
-template class expander_base<expandable_origin_mode::top, vtile_composite>;
-template class expander_base<expandable_origin_mode::bottom, vtile_composite>;
-template class expander_base<expandable_origin_mode::left, htile_composite>;
-template class expander_base<expandable_origin_mode::right, htile_composite>;
 
-
-
-inline auto top_expander(view& v, element_ptr ptr)
-{
-    return base_expander<expandable_origin_mode::top, vtile_composite>(v, ptr, 0);
-}
-
-inline auto left_expander(view &v, element_ptr ptr)
-{
-    return base_expander<expandable_origin_mode::left, htile_composite>(v, ptr, 0);
-}
-
-inline auto right_expander(view &v, element_ptr ptr)
-{
-    return base_expander<expandable_origin_mode::right, htile_composite>(v, ptr, 1);
-}
-
-inline auto bottom_expander(view &v, element_ptr ptr)
-{
-    return base_expander<expandable_origin_mode::bottom, vtile_composite>(v, ptr, 1);
-}
-*/
 inline auto top_expander(view& v, element_ptr ptr)
 {
     return expander_base< expandable_origin_mode::top, vtile_composite>(v, ptr, 0);

@@ -23,18 +23,19 @@ array_composite<2, vtile_element> tracker_track::make_buttons_tile(size_t track_
     };
 
     return vtile(htile(
-            fixed_size_label<8>(std::string("track " + std::to_string(track_index))),
-            resize_but,
-            clear_but,
-            col_number_spin
-            ), vspacer(5));
+                     fixed_size_label<8>(std::string("track " + std::to_string(track_index))),
+                     resize_but,
+                     clear_but,
+                     col_number_spin
+                     ),
+                 vspacer(5));
 }
 
 tracker_track::tracker_track(size_t track_index ) :
     array_composite<2, vtile_element>(vtile(make_buttons_tile(track_index), link(t_content) ) )
-    {
+{
     t_content.update_lines();
-    }
+}
 
 bool tracker_track::click(context const& ctx, mouse_button btn)
 {

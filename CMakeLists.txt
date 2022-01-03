@@ -6,11 +6,10 @@
 cmake_minimum_required(VERSION 3.9.6...3.15.0)
 project(DTracker LANGUAGES C CXX)
 
-set(ELEMENTS_ROOT "/home/johann/Documents/Elements/elements")
-
 if (NOT ELEMENTS_ROOT)
    message(FATAL_ERROR "ELEMENTS_ROOT is not set")
 endif()
+
 
 # Make sure ELEMENTS_ROOT is an absolute path to add to the CMake module path
 get_filename_component(ELEMENTS_ROOT "${ELEMENTS_ROOT}" ABSOLUTE)
@@ -127,7 +126,6 @@ set(ELEMENTS_APP_SOURCES
   set(ELEMENTS_APP_INCLUDE_DIRECTORIES
       ${CMAKE_CURRENT_SOURCE_DIR}/src
       ${CMAKE_CURRENT_SOURCE_DIR}/src/lib
-
       )
 
 include(ElementsConfigApp)

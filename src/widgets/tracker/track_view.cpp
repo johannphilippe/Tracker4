@@ -71,14 +71,13 @@ void track_set::update_lines()
 
 void track_set::update_labels(bool both)
 {
-for(auto & it : tracks)
-{
-    if( both && std::holds_alternative<tracker_track_ptr>(it))
+    for(auto & it : tracks)
+    {
+        if( both && std::holds_alternative<tracker_track_ptr>(it))
         std::get<tracker_track_ptr>(it)->t_content.update_labels();
-    else if(std::holds_alternative<sniper_track_ptr>(it))
+        else if(std::holds_alternative<sniper_track_ptr>(it))
         std::get<sniper_track_ptr>(it)->sn_box.update_labels();
-}
-
+    }
 }
 
 void track_set::add_track(track_type t)
@@ -150,11 +149,11 @@ track_view::track_view() :
                                               hold(
                                                   share(
                                                       htile(
-                                                      scroller(
-                                                          margin({5, 20, 5, 30},
+                                                          margin({5, 20, 5, 0},
+                                                                 scroller(
                                                                      link(t_set)
                                                                      )),
-                                                      margin({5, 20, 20, 0},
+                                                      margin({5, 20, 5, 0},
                                                              link(t_tempo) ))))
                                           ))
 

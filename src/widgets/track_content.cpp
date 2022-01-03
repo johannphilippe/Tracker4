@@ -276,7 +276,6 @@ bool track_content<T>::key(context const& ctx, key_info k)
 template<typename T>
 void track_content<T>::click_select(context const&, mouse_button btn, size_t line, size_t col)
 {
-    std::cout << "click select in track " << std::endl;
     if(btn.down) {
         view &v = jtracker::tracker_app::get_instance()->_view;
 

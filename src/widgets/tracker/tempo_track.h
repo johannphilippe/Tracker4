@@ -14,6 +14,7 @@ public:
     array_composite<2, vtile_element> make_buttons_tile();
 
     tempo_track();
+    //bool click(context const &ctx, mouse_button btn) override;
 
     track_content<tempo_track_line> t_content;
 };
@@ -35,6 +36,14 @@ class tempo_track_expander : public tempo_track_ptr_t, public expander_base< exp
 {
 public:
     tempo_track_expander();
+};
+
+class ttptr : public array_composite<1, vtile_element>
+{
+public:
+    ttptr() :
+        array_composite<1, vtile_element>(vtile(tempo_track()))
+    {}
 };
 
 #endif // TEMPO_TRACK_H
