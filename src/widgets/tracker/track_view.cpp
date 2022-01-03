@@ -137,12 +137,39 @@ view_limits track_set::limits(basic_context const& ctx) const
     return l;
 }
 
+
+track_scrollers::track_scrollers()
+    : t_set(), t_tempo()
+    , t_set_scroller(
+          scroller(
+              link(t_set)))
+    , t_tempo_scroller(std::make_shared<tempo_scroller_t>(
+                           vscroller(
+                               right_margin(15, link( t_tempo )))))
+    , t_tempo_expander(t_tempo_scroller)
+{
+    t_set_scroller.on_scroll = [&](point p )
+    {
+        // let it scroll horizontally without affecting the other one
+        if(p.x != 0) return;
+        t_tempo_scroller->set_position(p);
+        jtracker::get_app()->_view.refresh(*t_tempo_scroller);
+    };
+
+    t_tempo_scroller->on_scroll = [&](point p)
+    {
+      t_set_scroller.set_position(p);
+      jtracker::get_app()->_view.refresh(t_set_scroller);
+    };
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Track View
 /////////////////////////////////////////////////////////////////////////
 
-track_view::track_view() :
-    array_composite<3, vtile_element>(vtile(
+track_view::track_view()
+    : track_scrollers()
+    , array_composite<3, vtile_element>(vtile(
                                           link(bar),
                                           vtile(vspacer(8), link(text_box), vspacer(8)),
 
@@ -150,14 +177,14 @@ track_view::track_view() :
                                                   share(
                                                       htile(
                                                           margin({5, 20, 5, 0},
-                                                                 scroller(
-                                                                     link(t_set)
-                                                                     )),
+                                                             link(t_set_scroller)
+                                                                 ),
                                                       margin({5, 20, 5, 0},
-                                                             link(t_tempo) ))))
+                                                             link(t_tempo_expander) ))))
                                           ))
 
 {
+
     // on track_nbr change
     bar.track_nbr.on_change = [&](size_t v)
     {
@@ -179,8 +206,8 @@ track_view::track_view() :
       jtracker::data.number_of_lines = l;
       t_set.update_lines();
       t_set.update_labels(false);
-      t_tempo.ptr->t_content.update_lines();
-      t_tempo.ptr->t_content.update_labels();
+      t_tempo.t_content.update_lines();
+      t_tempo.t_content.update_labels();
       view &v = jtracker::get_app()->_view;
       v.layout();
       v.refresh();
@@ -191,7 +218,7 @@ track_view::track_view() :
     {
       jtracker::data.grid_step = change;
       t_set.update_labels();
-      t_tempo.ptr->t_content.update_labels();
+      t_tempo.t_content.update_labels();
       jtracker::tracker_app::get_instance()->_view.refresh(*this);
     };
 }

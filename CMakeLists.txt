@@ -81,6 +81,7 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/expandable.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_line.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_line.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/synced_scrollers.h
 
       # Tracker Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h

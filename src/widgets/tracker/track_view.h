@@ -80,11 +80,36 @@ public:
     std::vector<std::variant<tracker_track_ptr, sniper_track_ptr>> tracks;
 };
 
+
+//////////////////////////////////////////////////////////////////////////
+// Track Scrollers
+/////////////////////////////////////////////////////////////////////////
+
+class track_scrollers
+{
+public:
+    track_scrollers();
+
+    using link_set = indirect<reference<typename std::remove_reference<track_set>::type>>;
+    using link_tempo =indirect<reference<typename std::remove_reference<tempo_track>::type>>;
+    using right_margin_t = margin_element<right_margin_rect, cycfi::remove_cvref_t<link_tempo>>;
+    using set_scroller_t = proxy<cycfi::remove_cvref_t<link_set>, scroller_base>;
+    using tempo_scroller_t = proxy<cycfi::remove_cvref_t<right_margin_t>, scroller_base>;
+
+    track_set t_set;
+    tempo_track t_tempo;
+    set_scroller_t t_set_scroller;
+    std::shared_ptr<tempo_scroller_t> t_tempo_scroller;
+    tempo_track_expander t_tempo_expander;
+};
+
+
+
 //////////////////////////////////////////////////////////////////////////
 // Track View
 // Vertical list containing track set, tempo_track and common controls
 /////////////////////////////////////////////////////////////////////////
-class track_view : public array_composite<3, vtile_element>
+class track_view : public track_scrollers, public array_composite<3, vtile_element>
 {
 public:
     track_view();
@@ -93,9 +118,6 @@ public:
 
     track_view_bar bar;
     main_cell_editor_layout text_box;
-    track_set t_set;
-    tempo_track_expander t_tempo;
-    ttptr temp_ptr;
 };
 
 }

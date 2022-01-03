@@ -53,3 +53,7 @@ tempo_track_expander::tempo_track_expander()
                                                                          vscroller(
                                                                              right_margin(15, hold(this->ptr)))), 1)
 {}
+
+tempo_track_expander::tempo_track_expander(element_ptr elem)
+    : expander_base<expandable_origin_mode::right, htile_composite>(jtracker::get_app()->_view, elem, 1)
+{}
