@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.9.6...3.15.0)
 project(DTracker LANGUAGES C CXX)
 
 if (NOT ELEMENTS_ROOT)
-   message(FATAL_ERROR "ELEMENTS_ROOT is not set")
+   message(WARNING "ELEMENTS_ROOT is not set")
 endif()
 
 
