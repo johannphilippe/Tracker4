@@ -2,6 +2,14 @@
 
 In development version of new jo_tracker. The new name is not found yet. 
 
+In order to build this software, you need to set ELEMENTS_ROOT to [Elements](https://github.com/cycfi/elements/tree/artist_port) root directory.
+You can refer to Elements build instructions.
+```
+mkdir build && cd build
+cmake .. -DELEMENTS_ROOT="/home/root/to/elements"
+cmake --build .
+```
+
 ## Libraries
 
 This repository includes some open-source libraries source code : 

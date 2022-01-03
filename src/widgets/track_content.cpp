@@ -18,12 +18,13 @@ std::shared_ptr<T> track_content<T>::make_line(size_t i)
 
     // track content constructor
 template<typename T>
-track_content<T>::track_content(size_t num_lines, size_t num_cols) :
-    vdynamic_list(
-        make_resizable_composer(num_lines, [this](size_t i) { return make_line(i);}, &resize_conditions)
-  ),
-    num_cols(num_cols),
-    _lines(num_lines, nullptr)
+track_content<T>::track_content(size_t num_lines, size_t num_cols)
+    : vdynamic_list(
+        make_resizable_composer(num_lines, [this](size_t i) { return make_line(i);}, &resize_conditions))
+    , num_cols(num_cols)
+    , _lines(num_lines, nullptr)
+    , cell_click_callback([this](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);})
+    , text_callback([](size_t, size_t, std::string_view){})
 {}
 
 

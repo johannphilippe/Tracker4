@@ -63,4 +63,7 @@ namespace jtracker {
         t.cell_box_font						= font_descr{ "Open Sans", 14.0 };
         return t;
     }
+
+const tracker_theme theme = tracker_theme::dark_theme();
+
 }

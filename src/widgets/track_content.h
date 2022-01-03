@@ -73,8 +73,8 @@ public:
     using cell_click_cbk_type = std::function<void(context const&, mouse_button, size_t, size_t)>;
     using text_callback_type = std::function<void(size_t, size_t, std::string_view)>;
 
-    cell_click_cbk_type cell_click_callback = [&](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);};
-    text_callback_type text_callback = [](size_t, size_t, std::string_view) {};
+    cell_click_cbk_type cell_click_callback;
+    text_callback_type text_callback;
 
     resize_condition resize_conditions;
 protected:

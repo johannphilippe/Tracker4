@@ -48,7 +48,7 @@ struct tracker_theme
 };
 
 // Probably needs to be mutable (not const or constexpr)
-static const tracker_theme theme = tracker_theme::dark_theme();
+extern const tracker_theme theme;
 
 }
 
