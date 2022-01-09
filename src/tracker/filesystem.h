@@ -6,9 +6,8 @@
 #include<string>
 namespace fs = std::filesystem;
 /////////////////////////////////////////////////////////////////////////////
-/// This file contains information and utilities on tracker filesystem
-/// - Data is stored in home local directory
-/// -
+// This file contains information and utilities on tracker filesystem
+// Data is stored in home local directory
 /////////////////////////////////////////////////////////////////////////////
 
 #if defined(ELEMENTS_HOST_UI_LIBRARY_COCOA)
@@ -57,6 +56,7 @@ public:
         , tracker_general_config(fs::path(tracker_config).append("general_config.json"))
         , tracker_score_data(fs::path(tracker_project).append("score_data.json"))
         , tracker_orc_data(fs::path(tracker_project).append("orc_data.json"))
+        , tracker_gen_data(fs::path(tracker_project).append("gen_data.json"))
     {
         std::cout << "Home Directory : " << home_directory << std::endl
                   << "Tracker Dir : "  << tracker_dir << std::endl
@@ -87,6 +87,7 @@ public:
     const fs::path tracker_general_config;
     const fs::path tracker_score_data;
     const fs::path tracker_orc_data;
+    const fs::path tracker_gen_data;
 };
 
 

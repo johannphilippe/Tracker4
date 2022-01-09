@@ -7,49 +7,51 @@
 #include<variant>
 #include<widgets/tracker/tracker_track.h>
 #include<widgets/tracker/sniper_track.h>
-#include<widgets/track_base.h>
 #include<widgets/spinbox.h>
 #include<widgets/tracker/tempo_track.h>
 #include<widgets/expandable.h>
+#include<tracker/track_set_utilities.h>
+#include<tracker/track_base.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
 namespace jtracker {
 
-using tracker_track_ptr = std::shared_ptr<tracker_track>;
-using sniper_track_ptr = std::shared_ptr<sniper_track>;
-
-class track_bar_spin : public spinbox<size_t>
+////////////////////////////////////////////////////////////////////////////////
+// Custom templated spinbox
+////////////////////////////////////////////////////////////////////////////////
+template<typename T, T Init>
+class track_bar_spin : public spinbox<T>
 {
 public:
-    track_bar_spin() : spinbox<size_t>(spin_controller<size_t>(1, std::numeric_limits<size_t>::max(), 1, 1))
+    track_bar_spin() : spinbox<T>(spin_controller<T>(Init, std::numeric_limits<T>::max(), Init, 1))
     {}
 };
 
-class grid_step_spin : public spinbox<int>
-{
-public:
-    grid_step_spin() : spinbox<int>(spin_controller<int>(0, std::numeric_limits<int>::max(), 0, 1))
-    {}
-};
-
+////////////////////////////////////////////////////////////////////////////////
+// Track view top spinboxes
+////////////////////////////////////////////////////////////////////////////////
 class track_view_bar : public array_composite<2, layer_element>
 {
 public:
     track_view_bar();
 
-    track_bar_spin track_nbr, seq_nbr, line_nbr;
-    grid_step_spin grid_step;
+    track_bar_spin<size_t, 1> track_nbr, seq_nbr, line_nbr;
+    track_bar_spin<int, 0> grid_step;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Global text editor
+////////////////////////////////////////////////////////////////////////////////
 class main_cell_editor : public basic_input_box
 {
 public:
-    main_cell_editor() : basic_input_box("General editor")
+    main_cell_editor() : basic_input_box("General editor", font_descr({"Lato", 16.0}).medium())
     {}
 };
 
-class main_cell_editor_layout : public array_composite<2, layer_element>
+class main_cell_editor_layout :
+        public array_composite<2, layer_element>
 {
 public:
     main_cell_editor_layout();
@@ -77,12 +79,17 @@ public:
     view_limits limits(basic_context const& ctx) const override;
 
     std::vector<std::variant<tracker_track_ptr, sniper_track_ptr>> tracks;
+
+    std::function<void(size_t t, size_t l, size_t c, std::string_view v)> text_cbk =
+            [](size_t, size_t ,size_t, std::string_view) {};
+    std::function<void(size_t t, size_t l, size_t c, std::u32string_view v)> new_cell_focus_callback =
+            [](size_t, size_t, size_t, std::u32string_view){};
+
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Track Scrollers
 /////////////////////////////////////////////////////////////////////////
-
 class track_scrollers
 {
 public:
@@ -105,7 +112,7 @@ public:
 // Track View
 // Vertical list containing track set, tempo_track and common controls
 /////////////////////////////////////////////////////////////////////////
-class track_view : public track_scrollers, public array_composite<3, vtile_element>
+class track_view : public track_scrollers, public array_composite<5, vtile_element>
 {
 public:
     track_view();

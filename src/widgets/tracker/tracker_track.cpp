@@ -50,6 +50,6 @@ bool tracker_track::click(context const& ctx, mouse_button btn)
 
 void tracker_track::end_focus()
 {
-    t_content.unselect();
+    //t_content.unselect();
     array_composite<2, vtile_element>::end_focus();
 }

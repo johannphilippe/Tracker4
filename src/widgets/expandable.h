@@ -122,6 +122,7 @@ public:
             }
             else
             {
+                _ptr->end_focus();
                 this->end_focus();
                 this->erase(this->begin() + pos);
             }

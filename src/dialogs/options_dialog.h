@@ -7,14 +7,14 @@
 #include<widgets/custom_container.h>
 using namespace cycfi::elements;
 
-class click_callback
+class options_dialog_click_callback
 {
 public:
     std::function<void(element*)> click_remove = [](element* ptr) {};
 };
 
 class option_item :
-        public click_callback,
+        public options_dialog_click_callback,
         public audio_cs_option,
         public array_composite<2, htile_element>
 {

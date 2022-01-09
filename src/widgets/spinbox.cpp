@@ -19,7 +19,7 @@ void spinbox<T>::draw(context const& ctx)
     // Background
     ctx.canvas.fill_color(jtracker::theme.spin_background_color);
     ctx.canvas.fill_round_rect(ctx.bounds, 8.0f);
-    ctx.canvas.fill();
+    //ctx.canvas.fill();
 
     left_arrow_bounds = ctx.bounds;
     left_arrow_bounds.width( size.x / 4.0f) ;
@@ -48,7 +48,7 @@ void spinbox<T>::draw(context const& ctx)
     // Borders
     ctx.canvas.stroke_color(jtracker::theme.spin_borders_color);
     ctx.canvas.stroke_round_rect(ctx.bounds, 8.0f);
-    ctx.canvas.stroke();
+    //ctx.canvas.stroke();
 }
 
 template <typename T>

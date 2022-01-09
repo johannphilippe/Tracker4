@@ -10,13 +10,14 @@ std::shared_ptr<T> track_content<T>::make_line(size_t i)
     }
     if(_lines[i] == nullptr)
     {
-        _lines[i] = std::make_shared<T>( fully_visible ? num_cols : 4, i, static_cast<track_event_type>(rand() % 6));
+        _lines[i] = std::make_shared<T>( fully_visible ? num_cols : 4, i);
         _lines[i]->click_cbk = &cell_click_callback;
+        _lines[i]->text_cbk = &text_callback;
     }
     return _lines[i];
 }
 
-    // track content constructor
+// track content constructor
 template<typename T>
 track_content<T>::track_content(size_t num_lines, size_t num_cols)
     : vdynamic_list(
@@ -25,6 +26,7 @@ track_content<T>::track_content(size_t num_lines, size_t num_cols)
     , _lines(num_lines, nullptr)
     , cell_click_callback([this](context const& ctx, mouse_button btn, size_t l, size_t c) {this->click_select(ctx, btn, l, c);})
     , text_callback([](size_t, size_t, std::string_view){})
+    , cell_focus_callback([](size_t, size_t, std::u32string_view){})
 {}
 
 
@@ -121,10 +123,11 @@ void track_content<T>::set_at(size_t line, size_t col, std::string text)
 template<typename T>
 void track_content<T>::clear_cells()
 {
+    // Must match data instead of matching cells (sea that later)
     for(auto & it : _lines)
-        for(auto & it2 : it->cells)
-            it2->set_text("");
-
+        if(it.get() != nullptr)
+            for(auto & it2 : it->cells)
+                it2->set_text("");
 }
 
 template<typename T>
@@ -146,6 +149,7 @@ bool track_content<T>::key(context const& ctx, key_info k)
         _lines[selection.main_selected_line()]->focus(selection.main_selected_column() + 1);
         get_main_cell()->focus(1);
         begin_focus();
+        cell_focus_callback(selection.main_selected_line(), selection.main_selected_column(), get_main_cell()->text_box.get_text());
         ctx.view.refresh();
     };
 
@@ -282,7 +286,6 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
     if(btn.down) {
         view &v = jtracker::tracker_app::get_instance()->_view;
 
-
         auto simple_select = [&]()
         {
             for(auto & it : selection.selected)
@@ -297,6 +300,8 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
             get_cell_at(line, col)->background.select();
             tracker_app::get_animator_pool().push_back(get_cell_at(line, col)->background.current_color);
             tracker_app::get_animator_pool().animate(v);
+
+            cell_focus_callback(selection.main_selected_line(), selection.main_selected_column(), get_main_cell()->get_text());
         };
 
         // find path of cells to the current one
@@ -330,6 +335,8 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
                 tracker_app::get_animator_pool().push_back(get_cell_at(it.line_index, it.column_index)->background.current_color);
             }
             tracker_app::get_animator_pool().animate(v);
+
+            cell_focus_callback(selection.main_selected_line(), selection.main_selected_column(), get_main_cell()->get_text());
         };
 
         auto alt_selection = [&]()
@@ -351,9 +358,36 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
           }
 
           tracker_app::get_animator_pool().animate(v);
-
           selection.select_main(line, col);
+          cell_focus_callback(selection.main_selected_line(), selection.main_selected_column(), get_main_cell()->get_text());
         };
+
+
+        auto control_alt_selection = [&]()
+        {
+              for(size_t c = 0; c < _lines.size(); c++)
+              {
+                  int sel = selection.is_selected(c, col);
+                  if(sel == -1)
+                  {
+                      selection.selected.push_back(cell_selection(c, col));
+                      if(_lines[c] == nullptr) continue;
+                      get_cell_at(c, col)->background.select();
+                      tracker_app::get_animator_pool().push_back(get_cell_at(c, col)->background.current_color);
+                  } else if(sel != -1)
+                  {
+                      selection.remove_at(sel);
+                      if(_lines[c] == nullptr) continue;
+                      get_cell_at(c, col)->background.unselect();
+                      tracker_app::get_animator_pool().push_back(get_cell_at(c, col)->background.current_color);
+                  }
+              }
+
+              tracker_app::get_animator_pool().animate(v);
+              selection.select_main(line, col);
+              cell_focus_callback(selection.main_selected_line(), selection.main_selected_column(), get_main_cell()->get_text());
+        };
+
 
         if(btn.modifiers == 0)
         {
@@ -361,11 +395,16 @@ void track_content<T>::click_select(context const&, mouse_button btn, size_t lin
         }
         else if(btn.modifiers & mod_control)
         {
+            if(btn.modifiers & mod_alt)
+            {
+                control_alt_selection();
+                return;
+            }
             // find if is already selected
             int sel = selection.is_selected(line, col);
-            cell_selection c_sel = selection.selected[sel];
             if(sel != -1)
             {
+                cell_selection c_sel = selection.selected[sel];
                 //lines[selection.selected[sel].line_index]->
                 //        cells[selection.selected[sel].column_index]->background.unselect();
                 get_cell_at(c_sel.line_index, c_sel.column_index)->background.unselect();

@@ -5,70 +5,60 @@
 #include<widgets/curve_editor.h>
 #include<widgets/custom_radio.h>
 #include<tracker/jtracker.h>
+#include<widgets/spinbox.h>
 
 using namespace cycfi::elements;
 
 namespace jtracker {
 
-class curve_editor_view  : public array_composite<3, vtile_element> //: public vtile_composite
+///////////////////////////////////////////////////////////
+// Curve editor radio bar
+///////////////////////////////////////////////////////////
+
+using radio_selector_t = basic_choice<proxy<squared_radio_button_element, basic_button>>;
+struct curve_editor_radio_button : radio_selector_t
+{
+    //curve_editor_radio_button();
+    curve_editor_radio_button(radio_selector_t t)
+        : radio_selector_t(std::forward<proxy<squared_radio_button_element, basic_button>>(t))
+    {}
+};
+
+struct curve_editor_radios
+{
+    curve_editor_radios();
+    curve_editor_radio_button linear, log_exp, spline, quadbezier, cubbezier;
+
+};
+
+struct curve_editor_radio_group:
+        curve_editor_radios
+        , array_composite<3, layer_element>
+{
+    curve_editor_radio_group();
+};
+
+struct curve_editor_radio_group_holder
+{
+    curve_editor_radio_group radios;
+    void set_radio_selection(curve_mode c);
+};
+
+///////////////////////////////////////////////////////////
+// Curve editor view
+///////////////////////////////////////////////////////////
+class curve_editor_view
+        : public curve_editor_radio_group_holder
+        , public array_composite<3, vtile_element>
 {
 public:
     curve_editor_view();
 
-    inline auto make_help_button();
+    auto make_header();
     void mode_selection(bool b, curve_mode m);
     void make_info_popup();
+    auto make_mode_buttons();
 
-    inline auto make_mode_buttons()
-    {
-
-        auto spline_mode = squared_radio_button("Spline");
-        auto log_exp = squared_radio_button("log_exp");
-        auto quadbezier = squared_radio_button("quad bezier");
-        auto cubbezier = squared_radio_button("cubbezier");
-        auto linear = squared_radio_button("linear");
-
-        linear.select(true);
-        spline_mode.on_click = [&](bool b) {
-            mode_selection(b, curve_mode::cubic_spline);
-           };
-
-        log_exp.on_click = [&](bool b) {
-            mode_selection(b, curve_mode::log_exp);
-        };
-
-        cubbezier.on_click = [&](bool b) {
-            mode_selection(b, curve_mode::cubic_bezier);
-        };
-
-        quadbezier.on_click = [&](bool b) {
-            mode_selection(b, curve_mode::quadratic_bezier);
-        };
-
-        linear.on_click = [&](bool b) {
-            mode_selection(b, curve_mode::linear);
-        };
-
-        return group("curve mode",
-                     top_margin(25,
-                                margin({10,10,10,10},
-                                       htile(
-                                           linear,
-                                           hspacer(3),
-                                           log_exp,
-                                           hspacer(3),
-                                           spline_mode,
-                                           hspacer(3),
-                                           cubbezier,
-                                           hspacer(3),
-                                           quadbezier
-                                           )
-                                       )
-                                )
-                     );
-    }
-
-private:
     curve_editor editor;
 };
 

@@ -18,25 +18,32 @@ struct spin_controller
     T value, min, max, step;
 };
 
-/*****************************************
- * A scrollable, clickable, draggable Spinbox
- * (Number box with range and step)
-*****************************************/
+//////////////////////////////////////////////////////
+// A scrollable, clickable, draggable Spinbox
+// (Number box with range and step)
+//////////////////////////////////////////////////////
+
 template<typename T>
 class spinbox : public tracker<>
 {
-
 public:
 
     constexpr static const float height_index = 1.55f;
 
     spinbox(spin_controller<T> control_) : tracker<>(), controller(control_),
-        _text(std::to_string(controller.value)),
         on_change([&](T){}),
-    focused(-1), clicked(false)
+        _text(std::to_string(controller.value)),
+        focused(-1), clicked(false)
     {
         update_text();
     }
+
+    spinbox(spin_controller<T> control_, std::string name)
+        : spinbox(control_)
+    {
+        _name = name;
+    }
+
 
     spinbox() : spinbox(spin_controller<T>(0, 1, 1, 1))
     {}
@@ -95,15 +102,14 @@ protected:
 private:
 
     void click_event(context const &ctx, mouse_button &btn);
-
     std::string _text;
     int focused;
     point click_pos;
     rect left_arrow_bounds, right_arrow_bounds;;
     bool clicked;
-
     std::string name;
     bool labeled = false;
+    std::string _name;
 };
 
 template <typename T>
@@ -118,10 +124,8 @@ public:
         bool is_found = false;
         for(auto & it : values)
         {
-            std::cout << "vector value : "  << it << std::endl;
             if(value == it)
             {
-                std::cout << "is found " << std::endl;
                 is_found = true;
                 break;
             }
@@ -245,6 +249,45 @@ inline auto make_labeled_spinbox(std::string text, spin_controller<T> ctrl, std:
     return group(text, top_margin(40, margin({1,1,1,1}, vtile(hstretch(2, c)) ) ));
 }
 
+
+// Predefined Spinboxes
+class size_spinbox : public spinbox<size_t>
+{
+public:
+
+    size_spinbox()
+        : spinbox<size_t>(spin_controller<size_t>(1, std::numeric_limits<size_t>::max(), 1, 1))
+    {}
+};
+
+/////////////////////////////////////////////////////////////////////
+// Another spinbox, based on elements widgets
+////////////////////////////////////////////////////////////////////
+/*
+template<typename T>
+struct el_spin_components
+{
+    el_spin_components()
+        : text_box()
+        , left_arrow(plain_icon_button(icons::left_dir, 1.0))
+        , right_arrow(plain_icon_button(icons::right_dir, 1.0))
+    {}
+
+    basic_input_box text_box;
+    layered_button left_arrow, right_arrow;
+};
+
+template<typename T>
+class el_spin
+{
+public:
+    el_spin(spin_controller<T> controller)
+        : _controller(controller)
+    {}
+
+    spin_controller<T> _controller;
+};
+*/
 
 
 #endif // SPINBOX_H

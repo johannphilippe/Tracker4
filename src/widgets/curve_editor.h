@@ -19,23 +19,21 @@
 using namespace cycfi::elements;
 using namespace cycfi::artist;
 
-enum class curve_mode {
-        linear = 0,
-        log_exp = 1,
-        quadratic_bezier = 2,
-        cubic_bezier = 3,
-        cubic_spline = 4,
-};
-
 struct curve_editor_controller
 {
     curve_editor_controller(curve_mode m = curve_mode::linear,
                             int grain = 2048, int grid_steps_ = 10) :
-        mode(m),
         granularity(grain),
         grid_steps(grid_steps_)
-    {}
-    curve_mode mode;
+    {
+        set_mode(m);
+    }
+
+    void set_mode(curve_mode m)
+    {
+        samples.mode = m;
+    }
+
     int granularity;
     int grid_steps;
     bool grid_enabled = true;
@@ -48,7 +46,8 @@ class curve_editor : public tracker<>, receiver<curve_editor_controller>
 public:
     constexpr static const  float selection_distance = 0.02f;
 
-    curve_editor() :  controller(curve_mode::linear, 2048, 10) //grid_steps(10), granularity(2048), mode(curve_mode::linear)
+    curve_editor()
+        : controller(curve_mode::linear, 2048, 10)
     {}
 
     // Control methods

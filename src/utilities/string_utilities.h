@@ -47,6 +47,12 @@ inline void write_file_as_string(fs::path &p, std::string &to_write)
     ofs.close();
 }
 
+inline void write_file_as_string(fs::path &p, std::string_view to_write)
+{
+    std::ofstream ofs(p);
+    ofs << to_write;
+    ofs.close();
+}
 // number conversion utilities
 
 //get a Number from a std::string (set precision)

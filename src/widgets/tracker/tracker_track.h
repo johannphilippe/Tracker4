@@ -7,14 +7,12 @@
 #include<iostream>
 
 #include<widgets/track_content.h>
-#include<widgets/track_base.h>
 #include<widgets/spinbox.h>
 using namespace cycfi::elements;
 
 namespace jtracker {
 
 class tracker_track :
-        public track_base<track_type::tracker_track>,
         public array_composite<2, vtile_element>
 {
 public:

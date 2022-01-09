@@ -7,31 +7,41 @@ namespace jtracker {
         /***********************
         * COLORS
         ***********************/
-        t.app_background_color 				=   rgba(35, 35, 37, 255);
+        t.app_background_color 						=   rgba(35, 35, 37, 255);
 
-        //t.clear_buttons 					= 	colors::orchid;
-        t.clear_buttons_color 				= 	colors::pale_violet_red;
+        //t.clear_buttons 							= 	colors::orchid;
+        t.clear_buttons_color 						= 	colors::pale_violet_red;
+        t.store_buttons_color 						= 	colors::blue_violet;
+        t.info_buttons_color 						= 	colors::light_steel_blue;
 
-        //t.spin_borders_color 				=   rgba(28, 30, 34, 192);
-        t.spin_left_arrow_color 	 		= 	colors::light_salmon;
-        t.spin_right_arrow_color	 		= 	colors::light_sky_blue;
-        t.spin_sleeping_arrow_color			= 	colors::dark_slate_blue;
-        t.spin_borders_color 		 		=	colors::dark_slate_blue;
-        t.spin_text_color 		 			= 	colors::antique_white;
+        //t.spin_borders_color 						=   rgba(28, 30, 34, 192);
+        t.spin_left_arrow_color 	 				= 	colors::light_salmon;
+        t.spin_right_arrow_color	 				= 	colors::light_sky_blue;
+        t.spin_sleeping_arrow_color					= 	colors::dark_slate_blue;
+        t.spin_borders_color 		 				=	colors::dark_slate_blue;
+        t.spin_text_color 		 					= 	colors::antique_white;
 
-        t.track_background_color			= 	rgba(28, 30, 34, 255);
-        t.track_label_index_color			=	colors::grey[20].opacity(0.5);
-        t.track_label_index_hot_color		=	colors::grey[50].opacity(0.5);
-        t.sniper_track_background_color		= 	rgba(15, 15, 35, 190);  //rgb(15, 15, 40);
-        t.sniper_track_lines_color			= 	colors::wheat;
+        // Tracks colors
+
+        t.track_background_color					= 	rgba(28, 30, 34, 255);
+        t.track_label_index_color					=	colors::grey[20].opacity(0.5);
+        t.track_label_index_hot_color				=	colors::grey[50].opacity(0.5);
+        t.sniper_track_background_color				= 	rgba(15, 15, 35, 190);  //rgb(15, 15, 40);
+        t.sniper_track_lines_color					= 	colors::wheat;
 
 
-        t.none_event_color					=   rgba(28, 30, 34, 192);
-        t.csound_event_color				=	colors::midnight_blue;
-        t.lua_rt_event_color				=	colors::dark_green;
-        t.chuck_rt_color					=	colors::dark_slate_blue;
-        t.antescofo_rt_color				=	colors::dark_orchid;
-        t.audio_sample_color				=	colors::firebrick;
+        // Radios
+        t.rectangle_radio_inactive_color			=   colors::dark_violet;
+        t.rectangle_radio_active_color				= 	colors::medium_violet_red;
+
+        // Events
+
+        t.none_event_color							=   rgba(28, 30, 34, 192);
+        t.csound_event_color						=	colors::midnight_blue;
+        t.lua_rt_event_color						=	colors::dark_green;
+        t.chuck_rt_color							=	colors::dark_slate_blue;
+        t.antescofo_rt_color						=	colors::dark_orchid;
+        t.audio_sample_color						=	colors::firebrick;
 
         /***********************
         * FONTS

@@ -71,9 +71,15 @@ public:
 
     using cell_click_cbk_type = std::function<void(context const&, mouse_button, size_t, size_t)>;
     using text_callback_type = std::function<void(size_t, size_t, std::string_view)>;
+    using new_focus_callback = std::function<void(size_t, size_t, std::u32string_view)>;
 
+    // Callback redirecting to click_select
     cell_click_cbk_type cell_click_callback;
+
+    // Callback to parent track_set
     text_callback_type text_callback;
+    // new cell callback for parent track_set
+    new_focus_callback cell_focus_callback;
 
     resize_condition resize_conditions;
 protected:

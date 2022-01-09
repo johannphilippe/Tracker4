@@ -32,12 +32,10 @@ public:
     void drag(const context &ctx, mouse_button btn) override;
     bool scroll(context const& ctx, point dir, point p) override;
 
-
     void update_lines();
     void clear();
 
     std::vector<sniper_track_event> events;
-
     std::function<void(bool, sniper_track_event&)> on_event;
 protected:
 

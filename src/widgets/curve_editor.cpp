@@ -1,4 +1,5 @@
 #include<widgets/curve_editor.h>
+#include<utilities/maths_utilities.h>
 
     // Get simple logarithmic or exponential curve interpolation point
     float curve_editor::get_logexp_curve(float beg, float ending, int dur, int idx, float typ)
@@ -73,7 +74,7 @@
         auto pos = ctx.bounds.top_left();
         cnv.stroke_color(colors::purple);
         cnv.line_width(1.5);
-        switch(controller.mode)
+        switch(controller.samples.mode)
         {
         case curve_mode::linear:
         {
@@ -323,7 +324,8 @@
         auto pos = ctx.bounds.top_left();
         const point btn_pos = in_bounds(ctx, btn.pos);
         const point btn_pos_relative( (btn_pos.x - pos.x) / size.x, (btn_pos.y - pos.y) / size.y );
-        if(selected != -1)  { // drag sample and swap if necessary
+            // drag sample and swap if necessary
+        if(selected != -1)  {
             controller.samples[selected].x = btn_pos_relative.x;
             controller.samples[selected].y = btn_pos_relative.y;
             if( size_t(selected) < controller.samples.size() - 1 && controller.samples[selected].x > controller.samples[selected + 1].x) {
@@ -337,11 +339,12 @@
                 focused -= 1;
             }
             ctx.view.refresh();
-        } else if(selected == -1 && (btn.modifiers == mod_alt || btn.modifiers == mod_shift)){ // find segment
+            // Segmet drag (log exp curve mode only)
+        } else if(selected == -1 && (btn.modifiers == mod_alt || btn.modifiers == mod_shift)){
             if( (btn_pos_relative.x < controller.samples.front().x) || (btn_pos_relative.x > controller.samples.back().x) ) return;
+            if(controller.samples.mode != curve_mode::log_exp ) return;
             for(size_t i = 0; i < controller.samples.size() - 1; i++)
             {
-                if(controller.mode != curve_mode::log_exp ) return;
                    if( (btn_pos_relative.x > controller.samples[i].x) && (btn_pos_relative.x < controller.samples[i + 1].x))
                    {
                       controller.samples[i].curve += (last_position.y - btn_pos_relative.y);
@@ -351,7 +354,7 @@
                    }
             }
 
-            if(controller.mode == curve_mode::log_exp) {
+            if(controller.samples.mode == curve_mode::log_exp) {
                 ctx.view.refresh();
             }
         }
@@ -369,6 +372,8 @@
 
     bool curve_editor::scroll(context const&ctx, point dir, point p)
     {
+        if(controller.samples.mode != curve_mode::log_exp) return false;
+        if(controller.samples.size() == 0) return false;
         auto size = ctx.bounds.size();
         auto pos = ctx.bounds.top_left();
         const point relative((p.x - pos.x) / size.x, (p.y - pos.y) / size.y);
@@ -376,6 +381,7 @@
         {
             if(relative.x > controller.samples[i].x && relative.x < controller.samples[i + 1].x) {
                 controller.samples[i].curve += (dir.y / 10.0);
+                controller.samples[i].curve = jtracker::maths::limit_number<float>(-10, 10, controller.samples[i].curve);
                 ctx.view.refresh();
                 return true;
             }

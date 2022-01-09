@@ -17,7 +17,7 @@ track_view_bar::track_view_bar() :
 
 
 main_cell_editor_layout::main_cell_editor_layout() :
-    array_composite<2, layer_element>(layer(  margin({5,5,5, 5}, align_center_middle( link(editor) )),
+    array_composite<2, layer_element>(layer( margin( {5, 5, 5, 5}, (  vsize(100, scroller( hsize(16384, link(editor) ), no_scrollbars | no_vscroll)))),
                                               rbox(colors::dark_orchid.opacity(0.4), 5))) {}
 
 view_limits main_cell_editor_layout::limits(basic_context const& ctx) const
@@ -86,6 +86,16 @@ void track_set::add_track(track_type t)
     case track_type::tracker_track:
     {
         tracker_track_ptr t_ptr(new tracker_track(tracks.size()));
+        size_t t_idx = tracks.size();
+        t_ptr->t_content.text_callback = [&, t_idx](size_t l, size_t c, std::string_view v)
+        {
+            std::cout << "cooolback here in track " << t_idx << " " << l << " " << c << " " << v << std::endl;
+            text_cbk(t_idx, l, c, v);
+        };
+        t_ptr->t_content.cell_focus_callback = [&, t_idx](size_t l, size_t c, std::u32string_view v)
+        {
+           new_cell_focus_callback(t_idx, l, c, v);
+        };
         std::variant<tracker_track_ptr, sniper_track_ptr > v;
         v = t_ptr;
         tracks.push_back(v);
@@ -169,25 +179,50 @@ track_scrollers::track_scrollers()
 
 track_view::track_view()
     : track_scrollers()
-    , array_composite<3, vtile_element>(vtile(
+    , array_composite<5, vtile_element>(vtile(
                                           link(bar),
-                                          vtile(vspacer(8), link(text_box), vspacer(8)),
-
-                                              hold(
+                                            vspacer(5),
+                                            margin({0, 5, 0, 5},
+                                                    link(text_box)),
+                                                   //link(edit)),
+                                            vspacer(5),
+                                            hold(
                                                   share(
                                                       htile(
                                                           margin({5, 5, 5, 0},
                                                              link(t_set_scroller)
                                                                  ), hspacer(10),
                                                       margin({5,5, 5, 0},
-                                                             link(t_tempo_expander) ))))
-                                          ))
-
+                                                             link(t_tempo_expander) )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
 {
+
+    t_set.text_cbk = [&](size_t t, size_t l, size_t c, std::string_view v)
+    {
+        text_box.editor.set_text(v);
+        jtracker::get_app()->_view.refresh(text_box.editor);
+    };
+
+    t_set.new_cell_focus_callback = [&](size_t t, size_t l, size_t c, std::u32string_view v)
+    {
+        text_box.editor.set_text(v);
+        jtracker::get_app()->_view.refresh(text_box.editor);
+    };
+
+    text_box.editor.on_text = [&](std::string_view v)
+    {
+        track_set_utilities::set_text_to_selected_cells(t_set.tracks, v);
+    };
 
     // on track_nbr change
     bar.track_nbr.on_change = [&](size_t v)
     {
+        // Here it should update the global number of tracks, follow it to persistent data, then update tracks/lines
+        // to implement
         t_set.set_num_tracks(v);
         t_set.update_lines();
         jtracker::tracker_app::get_instance()->_view.refresh(*this);
@@ -221,11 +256,12 @@ track_view::track_view()
       t_tempo.t_content.update_labels();
       jtracker::tracker_app::get_instance()->_view.refresh(*this);
     };
+
 }
 
 view_limits track_view::limits(basic_context const& ctx) const
 {
-    view_limits normal = array_composite<3, vtile_element>::limits(ctx);
+    view_limits normal = array_composite<5, vtile_element>::limits(ctx);
     point view_size = ctx.view.size();
     normal.max = view_size;
     return normal;

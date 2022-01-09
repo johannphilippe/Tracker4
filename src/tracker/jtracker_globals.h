@@ -8,6 +8,7 @@
 #include<tracker/config_data.h>
 #include<utilities/string_utilities.h>
 #include<animations/fps_model.h>
+#include<tracker/filesystem.h>
 
 using namespace std::chrono;
 using namespace std::chrono_literals;
@@ -35,10 +36,25 @@ struct tracker_data
 
     fps_value app_fps;
     tracker_filesystem filesystem;
+
+    // Data for persistence
     tracker_audio_config_data audio_config;
+    json gen_data;
 };
 
 extern tracker_data data;
+
+inline void save_gen_data()
+{
+    std::string to_write = data.gen_data.dump(4);
+    jtracker::string::write_file_as_string(data.filesystem.tracker_gen_data , to_write);
+}
+
+inline void save_audio_config()
+{
+    std::string to_write = data.audio_config.to_json().dump(4);
+    jtracker::string::write_file_as_string(data.filesystem.tracker_audio_config, to_write);
+}
 
 }
 

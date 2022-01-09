@@ -4,11 +4,11 @@ Todo list for this new version of jo_tracker created with elements.
 
 The MUST have of this, is that we need to be able to process everything in Csound (export a CSD, render audio etc from Csound)
 
-##  General
+## General
 
 * Find a new name
 
-### Build & delivery
+### Build & delivery
 
 * Shipped with luajit
 * Shipped with csoundfaust opcodes
@@ -17,24 +17,24 @@ The MUST have of this, is that we need to be able to process everything in Csoun
 
 The project must contain or import those sources and build it so it can be installed with the tracker.
 
-## GUI
+## GUI
 
-### Standard elements
+### Standard elements
 
 * Improve spinbox allowing to type text inside
-* Scroller in sync with another one 
+* ✓ Scroller in sync with another one 
 
-### Tracker specific elements
+### Tracker specific elements
 
 * Code editor
 * Curve editor -> curve comparisons
 * Track cell -> scroll to increment
+* Track cell -> copy paste (actions list)
 * Tracker cell -> placeholder or tooltip for p-field name
 * Tracker track -> a way to keep the action bars in the view
 * Sniper track -> add a list of vertical automations (showable, hidable)
 * Sniper track -> event mode selection
 * Sniper track -> text editor
-
 
 ### Audio elements
 
@@ -45,12 +45,14 @@ The project must contain or import those sources and build it so it can be insta
 
 ## Functionnalities 
 
-### To Add 
+### To Add 
 
-* Action list for common actions, and user defined actions (API)
-* Different events types -> csound score, chuck, lua, soundfile
-* Render dialog
-* Event types -> Csound score, Chuck process, luajit process, Faust, Waveform, and one day Antescofo process
+* [ ] Action list for common actions, and user defined actions (API)
+* [ ] Different events types -> csound score, chuck, lua, soundfile
+* [ ] Render dialog
+* [ ] Event types -> Csound score, Chuck process, luajit process, Faust, Waveform, and one day Antescofo process
+* [ ] GEN Tab -> Copy GEN to another index 
+* [ ] GEN Tab -> Comparison curve
 
 ### To improve 
 
@@ -80,6 +82,7 @@ The project must contain or import those sources and build it so it can be insta
 
 ## Bugs
 
-* Tempo track : keys do not refresh the view
-* Basic_input_box placeholder not in right place (main text box, and options)
-* Improve drag event in sniper track -> drag from the middle must not be an obligation, create an event and expand it immediatly
+* [x] Cell selection, multiple crashes
+* [x] Tempo track : keys do not refresh the view
+* [x] Basic_input_box placeholder not in right place (main text box, and options)
+* [ ] Improve drag event in sniper track -> drag from the middle must not be an obligation, create an event and expand it immediatly

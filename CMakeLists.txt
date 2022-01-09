@@ -30,6 +30,19 @@ set(ELEMENTS_APP_VERSION "1.0")
 
 add_compile_definitions(TRACKER_APP_NAME="DTracker")
 
+set(ELEMENTS_APP_RESOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-Black.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-BlackItalic.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-Bold.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-BoldItalic.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-Italic.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-Light.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-LightItalic.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-Regular.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-Thin.ttf
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts/Lato/Lato-ThinItalic.ttf
+    )
+
 set(ELEMENTS_APP_SOURCES 
       # Audio
       #${CMAKE_CURRENT_SOURCE_DIR}/src/audio/csound_singleton.h
@@ -65,7 +78,6 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_content.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_content.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/sniper_track_content.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_base.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/custom_labels.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/spinbox.cpp
@@ -82,6 +94,7 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_line.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/track_line.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/synced_scrollers.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/common_widgets.h
 
       # Tracker Widgets
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/curve_editor_view.h
@@ -96,6 +109,8 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track_line.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/tempo_track_line.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/gen_view.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/tracker/gen_view.cpp
 
       # Maths
       ${CMAKE_CURRENT_SOURCE_DIR}/src/maths/cubic_spline.h
@@ -117,6 +132,9 @@ set(ELEMENTS_APP_SOURCES
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/config_data.cpp
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/tracker_actions.h
       ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/tracker_actions.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/track_set_utilities.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/track_set_utilities.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/tracker/track_base.h
 
       ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
       )

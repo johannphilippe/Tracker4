@@ -12,6 +12,12 @@ void cell_selection::set_selection(size_t line, size_t col)
     column_index = col;
 }
 
+void cell_selector::for_each(std::function<void(cell_selection &)> cbk)
+{
+    for(auto & it : selected)
+        cbk(it);
+}
+
 void cell_selector::select_main(cell_selection c)
 {
     has_selection = true;

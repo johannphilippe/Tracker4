@@ -9,15 +9,6 @@ auto option_item::make_view()
         enabled = b;
     };
 
-    /*
-    auto tb = share(basic_input_box("Write a Csound option here"));
-    tb->set_text(option);
-    tb->on_text = [&](std::string_view v)
-    {
-      option = v;
-    };
-    */
-
     auto tb = input_box("Write a Csound option");
     tb.second->set_text(option);
     tb.second->on_text = [&](std::string_view v)
@@ -31,7 +22,7 @@ auto option_item::make_view()
 }
 
 option_item::option_item(std::string name, bool enable) :
-    click_callback(),
+    options_dialog_click_callback(),
     audio_cs_option(name, enable),
     array_composite<2, htile_element>(make_view())
 {}
@@ -192,6 +183,7 @@ void options_dialog::make_content()
     ok_button.on_click = [&](bool)
     {
         // save before
+        jtracker::save_audio_config();
         update_config();
         close();
     };

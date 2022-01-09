@@ -33,6 +33,8 @@ struct cell_selector
         has_selection(false), is_editing(false)
     {}
 
+    void for_each(std::function<void(cell_selection &)> cbk);
+
     void select_main(cell_selection c);
     void select_main(size_t line, size_t col);
 

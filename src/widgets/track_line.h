@@ -30,8 +30,8 @@ public:
     virtual void set_num_cols(size_t num_cols);
     void update_label(bool create = false);
 
-    std::function<void(context const&ctx, mouse_button btn, size_t, size_t col_index)> *click_cbk = nullptr;
-    std::function<void(key_info k)> on_key = [](key_info){};
+    std::function<void(context const& ctx, mouse_button btn, size_t, size_t)> *click_cbk = nullptr;
+    std::function<void(size_t, size_t, std::string_view)> *text_cbk = nullptr;
 
     std::vector<std::shared_ptr<track_cell>> cells;
     size_t line_index = 0;

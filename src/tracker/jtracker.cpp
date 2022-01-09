@@ -11,7 +11,6 @@ tracker_app::tracker_app(int argc, char *argv[]) :
     _win.on_close = [this](){
         this->stop();
     };
-
 }
 
 tracker_app *tracker_app::get_instance(int argc, char *argv[])

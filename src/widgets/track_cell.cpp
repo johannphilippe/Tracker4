@@ -18,16 +18,8 @@ void cell_background::draw(context const& ctx)
     ctx.canvas.fill_round_rect(ctx.bounds, 4);
     ctx.canvas.fill();
 
-    if(is_in_grid)
-    {
-        ctx.canvas.line_width(2);
-        ctx.canvas.stroke_color(colors::bisque);
-        ctx.canvas.stroke_round_rect(ctx.bounds, 4);
-        ctx.canvas.stroke();
-    }
-
-    ctx.canvas.line_width(0.5);
-    ctx.canvas.stroke_color(colors::navajo_white);
+    ctx.canvas.line_width( is_in_grid ? 1.5 : 0.5);
+    ctx.canvas.stroke_color( is_in_grid ? colors::bisque : colors::navajo_white);
     ctx.canvas.stroke_round_rect(ctx.bounds, 4);
     ctx.canvas.stroke();
 }
@@ -86,10 +78,6 @@ track_cell::track_cell( float width, color inactive_color) :
   , _width(width)
 {
     background.set_inactive_color(inactive_color);
-    text_box.on_text = [&](std::string_view v)
-    {
-        std::cout << "on text : " << v << std::endl;
-    };
 }
 
 view_limits track_cell::limits(basic_context const&) const

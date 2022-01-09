@@ -22,6 +22,8 @@ struct tracker_theme
 
     // Buttons
     color clear_buttons_color;
+    color store_buttons_color;
+    color info_buttons_color;
 
     // Spinboxes
     color spin_background_color;
@@ -37,6 +39,10 @@ struct tracker_theme
     color track_background_color;
     color sniper_track_background_color;
     color sniper_track_lines_color;
+
+    // Radios
+    color rectangle_radio_inactive_color;
+    color rectangle_radio_active_color;
 
     // events
     color none_event_color;

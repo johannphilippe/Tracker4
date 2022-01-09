@@ -17,6 +17,7 @@ public:
 
     bool click(context const& ctx, mouse_button btn) override;
     bool text(context const& ctx, text_info info) override;
+    //void end_focus() override;
 
     track_content<tempo_track_line> t_content;
 };

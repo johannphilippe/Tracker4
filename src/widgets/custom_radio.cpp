@@ -8,7 +8,7 @@ void squared_radio_button_element::draw(const context &ctx)
     auto  tracking = state.tracking;
     if(value)
     {
-      ctx.canvas.fill_color(background.opacity(0.7));
+      ctx.canvas.fill_color(background.opacity(0.8));
     } else if(tracking) {
       ctx.canvas.fill_color(background);
     } else if(hilite) {
@@ -32,7 +32,7 @@ view_limits squared_radio_button_element::limits(const basic_context &ctx) const
 {
     auto t_size = measure_text(ctx.canvas, _text, get_theme().text_box_font);
     view_limits limits;
-    limits.max = point(full_extent, t_size.y);
+    limits.max = point(full_extent, t_size.y * 1.5);
     return limits;
 }
 

@@ -2,7 +2,7 @@
 
 bool animation_base::animate()
 {
-    if(_cnt >= 1.0 ) return true;
+    if(_cnt > 1.0 ) return true;
     _animate(_val);
     _increment();
     return false;

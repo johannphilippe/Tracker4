@@ -24,7 +24,7 @@ class cell_background : public tracker<>
 public:
 
     cell_background(float width = 40,
-                    color inactive_color = get_theme().panel_color);
+                    color inactive_color = get_event_color(track_event_type::none));
 
     void draw(context const& ctx) override;
 

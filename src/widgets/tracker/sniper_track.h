@@ -2,14 +2,12 @@
 #define SNIPER_TRACK_H
 
 #include<elements.hpp>
-#include<widgets/track_base.h>
 #include<widgets/sniper_track_content.h>
 #include<widgets/sniper_track_box.h>
 #include<widgets/custom_labels.h>
 using namespace cycfi::elements;
 
 class sniper_track :
-        public track_base<track_type::sniper_track>,
         public vtile_composite
 {
 public:
