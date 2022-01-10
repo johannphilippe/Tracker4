@@ -1,4 +1,6 @@
 #include<widgets/tracker/tracker_track.h>
+#include<widgets/spinbox.h>
+#include<widgets/custom_labels.h>
 
 array_composite<2, vtile_element> tracker_track::make_buttons_tile(size_t track_index)
 {

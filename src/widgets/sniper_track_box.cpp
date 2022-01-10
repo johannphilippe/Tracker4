@@ -1,4 +1,7 @@
 #include<widgets/sniper_track_box.h>
+#include<tracker/jtracker_globals.h>
+#include<tracker/jtracker_theme.h>
+#include<widgets/custom_labels.h>
 
 auto line_number_labels::make_label (size_t i)
 {

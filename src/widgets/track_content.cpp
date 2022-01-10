@@ -1,4 +1,9 @@
 #include "track_content.h"
+#include<tracker/jtracker_globals.h>
+#include<widgets/custom_labels.h>
+#include<widgets/track_cell.h>
+#include<models/track_event.h>
+#include<tracker/jtracker.h>
 
 template<typename T>
 std::shared_ptr<T> track_content<T>::make_line(size_t i)
@@ -10,7 +15,24 @@ std::shared_ptr<T> track_content<T>::make_line(size_t i)
     }
     if(_lines[i] == nullptr)
     {
-        _lines[i] = std::make_shared<T>( fully_visible ? num_cols : 4, i);
+        size_t ncols = (fully_visible ? num_cols : 4);
+        _lines[i] = std::make_shared<T>( ncols, i);
+        for(size_t c = 0; c < ncols; c++)
+        {
+            if(selection.is_selected(i, c) != -1)
+            {
+                _lines[i]->cells[c]->background.current_color =
+                        std::make_shared<color_animation>(_lines[i]->cells[c]->background.active);
+
+                // Uncomment and remove line above and refresh to animate
+                //_lines[i]->cells[c]->background.select();
+                //tracker_app::get_animator_pool().push_back(get_cell_at(i, c)->background.current_color);
+
+            }
+        }
+        jtracker::get_app()->_view.refresh(*this);
+        //tracker_app::get_animator_pool().animate(jtracker::get_app()->_view);
+
         _lines[i]->click_cbk = &cell_click_callback;
         _lines[i]->text_cbk = &text_callback;
     }

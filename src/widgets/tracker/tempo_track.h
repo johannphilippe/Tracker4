@@ -2,12 +2,12 @@
 #define TEMPO_TRACK_H
 
 #include<elements.hpp>
-#include<widgets/custom_labels.h>
+
 #include<widgets/expandable.h>
-#include<widgets/tracker/tempo_track_line.h>
 #include<widgets/track_content.h>
-#include<widgets/synced_scrollers.h>
+
 using namespace cycfi::elements;
+
 
 class tempo_track : public array_composite<2, vtile_element>
 {

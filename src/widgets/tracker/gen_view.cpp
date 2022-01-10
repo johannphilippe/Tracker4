@@ -1,6 +1,7 @@
 #include "gen_view.h"
 #include<tracker/jtracker.h>
 #include<tracker/jtracker_globals.h>
+#include<widgets/common_widgets.h>
 
 namespace jtracker {
 

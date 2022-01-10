@@ -1,4 +1,5 @@
 #include "widgets/track_line.h"
+#include<widgets/custom_labels.h>
 
 void track_line::set_num_cols(size_t num_cols)
 {

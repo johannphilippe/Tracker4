@@ -1,4 +1,9 @@
 #include<widgets/tracker/track_view.h>
+#include<widgets/expandable.h>
+#include<tracker/track_set_utilities.h>
+#include<tracker/track_base.h>
+#include<widgets/tracker/tracker_track.h>
+#include<widgets/tracker/sniper_track.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Materials

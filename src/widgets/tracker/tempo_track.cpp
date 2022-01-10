@@ -1,4 +1,7 @@
 #include "tempo_track.h"
+#include<widgets/custom_labels.h>
+#include<widgets/tracker/tempo_track_line.h>
+#include<widgets/synced_scrollers.h>
 
 ////////////////////////////////////////////////////////////////////////
 // Tempo track

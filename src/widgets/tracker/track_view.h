@@ -5,12 +5,9 @@
 #include<vector>
 #include<memory>
 #include<variant>
-#include<widgets/tracker/tracker_track.h>
-#include<widgets/tracker/sniper_track.h>
+
 #include<widgets/spinbox.h>
 #include<widgets/tracker/tempo_track.h>
-#include<widgets/expandable.h>
-#include<tracker/track_set_utilities.h>
 #include<tracker/track_base.h>
 using namespace cycfi::elements;
 using namespace cycfi::artist;

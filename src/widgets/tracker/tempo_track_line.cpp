@@ -1,4 +1,5 @@
 #include<widgets/tracker/tempo_track_line.h>
+#include<widgets/track_cell.h>
 
 tempo_track_line::tempo_track_line(size_t , size_t l_idx, track_event_type t)
     : track_line(l_idx, t)

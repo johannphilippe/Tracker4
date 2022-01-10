@@ -2,12 +2,10 @@
 #define TRACK_H
 
 #include<elements.hpp>
-#include<widgets/custom_labels.h>
 #include<tracker/jtracker.h>
 #include<iostream>
 
 #include<widgets/track_content.h>
-#include<widgets/spinbox.h>
 using namespace cycfi::elements;
 
 namespace jtracker {

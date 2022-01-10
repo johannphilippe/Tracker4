@@ -4,14 +4,7 @@
 #include<elements.hpp>
 #include<iostream>
 #include<vector>
-#include<tracker/jtracker.h>
-#include<tracker/jtracker_theme.h>
 #include<models/sniper_track_event.h>
-#include<models/track_event.h>
-#include<utilities/paint_utilities.h>
-#include<utilities/string_utilities.h>
-#include<utilities/maths_utilities.h>
-#include<tracker/jtracker_globals.h>
 
 using namespace cycfi::elements;
 

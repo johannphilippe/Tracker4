@@ -1,5 +1,13 @@
 ﻿#include "sniper_track_content.h"
 
+#include<tracker/jtracker.h>
+#include<tracker/jtracker_theme.h>
+#include<models/track_event.h>
+#include<utilities/paint_utilities.h>
+#include<utilities/string_utilities.h>
+#include<utilities/maths_utilities.h>
+#include<tracker/jtracker_globals.h>
+
 void sniper_track_content::clear() {}
 
 float sniper_track_content::line_height() const

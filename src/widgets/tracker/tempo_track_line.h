@@ -1,7 +1,6 @@
 #ifndef TEMPO_TRACK_LINE_H
 #define TEMPO_TRACK_LINE_H
 
-#include<widgets/track_cell.h>
 #include<widgets/track_line.h>
 
 class tempo_track_line : public track_line

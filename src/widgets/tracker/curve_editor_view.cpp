@@ -126,7 +126,7 @@ inline auto curve_editor_view::make_header()
     auto help_button_tip = tooltip(hb, make_tip("Help"));
 
     auto compare_button = toggle_icon_button(icons::exchange, 1.0);
-    compare_button.on_click = [&](bool b)
+    compare_button.on_click = [&](bool )
     {
 
     };

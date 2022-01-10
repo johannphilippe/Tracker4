@@ -2,12 +2,10 @@
 #define SNIPER_TRACK_BOX_H
 
 #include<elements.hpp>
-#include<tracker/jtracker_globals.h>
-#include<tracker/jtracker_theme.h>
-#include<widgets/custom_labels.h>
+#include<widgets/sniper_event_editor.h>
 #include<widgets/sniper_track_content.h>
 #include<iostream>
-#include<widgets/sniper_event_editor.h>
+
 using namespace cycfi::elements;
 
 class line_number_labels : public vdynamic_list

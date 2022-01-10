@@ -16,13 +16,19 @@ class cell_text_box : public basic_input_box
 {
 public:
     cell_text_box()
-        : basic_input_box("" , jtracker::theme.cell_box_font ) {}
+        : basic_input_box("", jtracker::theme.cell_box_font)
+    {
+    }
+
+    void set_placeholder(std::string text)
+    {
+        basic_input_box::_placeholder = text;
+    }
 };
 
 class cell_background : public tracker<>
 {
 public:
-
     cell_background(float width = 40,
                     color inactive_color = get_event_color(track_event_type::none));
 

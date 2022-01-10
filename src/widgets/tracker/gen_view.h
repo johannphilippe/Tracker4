@@ -2,7 +2,6 @@
 #define GEN_VIEW_H
 #include<elements.hpp>
 #include<widgets/tracker/curve_editor_view.h>
-#include<widgets/common_widgets.h>
 using namespace cycfi::elements;
 namespace jtracker {
 

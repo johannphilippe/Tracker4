@@ -2,7 +2,6 @@
 #define TRACK_LINE_H
 
 #include<widgets/track_cell.h>
-#include<widgets/custom_labels.h>
 
 /*
  * Represents a line of cells.

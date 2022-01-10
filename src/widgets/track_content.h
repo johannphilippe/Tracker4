@@ -6,16 +6,12 @@
 #include<vector>
 #include<iostream>
 #include<memory>
-#include<widgets/custom_labels.h>
-#include<widgets/track_cell.h>
-#include<models/track_event.h>
-#include<tracker/jtracker.h>
 #include<controllers/cell_selection_controller.h>
 #include<widgets/dynamic_size_cell_composer.h>
-#include<tracker/jtracker_globals.h>
 
 #include<widgets/track_line.h>
 #include<widgets/tracker/tempo_track_line.h>
+
 using namespace cycfi::elements;
 using namespace std::chrono_literals;
 using namespace jtracker;
